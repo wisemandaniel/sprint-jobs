@@ -30,7 +30,6 @@ const UserProfile = () => {
         <div>
           <p className="font-semibold text-xl dark:text-gray-200"> Michael Roberts </p>
           <p className="text-gray-500 text-sm dark:text-gray-400">  Administrator   </p>
-          <p className="text-gray-500 text-sm font-semibold dark:text-gray-400"> info@shop.com </p>
         </div>
       </div>
       <div>
@@ -46,7 +45,7 @@ const UserProfile = () => {
 
             <div>
               <p className="font-semibold dark:text-gray-200 ">{item.title}</p>
-              <p className="text-gray-500 text-sm dark:text-gray-400">item.desc</p>
+              <p className="text-gray-500 text-sm dark:text-gray-400">{item.desc}</p>
             </div>
           </div>
         ))}

@@ -40,7 +40,7 @@ const AppliedJobs = () => {
             </TooltipComponent>
           </div>
           {activeMenu ? (
-            <div className="w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
+            <div className="w-1/5 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
               <Sidebar />
             </div>
           ) : (
@@ -51,7 +51,7 @@ const AppliedJobs = () => {
           <div
             className={
               activeMenu
-                ? 'dark:bg-main-dark-bg  bg-main-bg min-h-screen md:ml-72 w-full  '
+                ? 'dark:bg-main-dark-bg  bg-main-bg min-h-screen ml-56 w-4/5  '
                 : 'bg-main-bg dark:bg-main-dark-bg  w-full min-h-screen flex-2 '
             }
           >
@@ -60,12 +60,33 @@ const AppliedJobs = () => {
             </div>
             <div>
               {themeSettings && (<ThemeSettings />)}
-              <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-              <Header category="Page" title="All Applied Jobs" />
+              <div className="w-4/5 m-auto mt-20">
+
+                <div style={{backgroundColor: currentColor, cursor: 'pointer' }}
+                     className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-full m-4">
+                  <h3 className="text-xl font-semibold mb-2 text-white">uploaded on 01/01/2023</h3>
+                  <p className="mb-4 text-white">Short description here...</p>
+                  <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <div></div>
+                    <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <p className='text-white'> available</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{backgroundColor: currentColor, cursor: 'pointer' }}
+                     className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-full m-4">
+                  <h3 className="text-xl font-semibold mb-2 text-white">uploaded on 01/01/2023</h3>
+                  <p className="mb-4 text-white">Short description here...</p>
+                  <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <div></div>
+                    <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <p className='text-white'> Taken</p>
+                    </div>
+                  </div>
+                </div>
+                
             </div>
-            </div>
-            <div className='flex-shrink-0'>
-               <Footer />
             </div>
           </div>
         </div>

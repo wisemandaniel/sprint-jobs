@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Navbar, Footer, Sidebar, ThemeSettings } from '../components';
 import '../App.css';
@@ -6,7 +6,7 @@ import '../App.css';
 import { useStateContext } from '../contexts/ContextProvider';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { Header } from '../components';
+import { Link } from 'react-router-dom';
 
 const AploadedJobs = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -19,6 +19,16 @@ const AploadedJobs = () => {
       setCurrentMode(currentThemeMode);
     }
   }, []);
+
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
 
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
@@ -40,7 +50,7 @@ const AploadedJobs = () => {
             </TooltipComponent>
           </div>
           {activeMenu ? (
-            <div className="w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
+            <div className="w-1/5 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
               <Sidebar />
             </div>
           ) : (
@@ -51,7 +61,7 @@ const AploadedJobs = () => {
           <div
             className={
               activeMenu
-                ? 'dark:bg-main-dark-bg  bg-main-bg min-h-screen md:ml-72 w-full  '
+                ? 'dark:bg-main-dark-bg  bg-main-bg min-h-screen ml-56 w-4/5  '
                 : 'bg-main-bg dark:bg-main-dark-bg  w-full min-h-screen flex-2 '
             }
           >
@@ -60,13 +70,99 @@ const AploadedJobs = () => {
             </div>
             <div>
               {themeSettings && (<ThemeSettings />)}
-              <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-              <Header category="Page" title="All Uploaded Jobs" />
             </div>
+            <div className="w-4/5 m-auto mt-20">
+
+                <div style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
+                  <div></div>
+                  <button onClick={openModal} style={{backgroundColor: currentColor}} className='py-2 px-5 rounded-md text-white'>
+                    Add a job
+                  </button>
+                </div>
+
+                <div style={{backgroundColor: '#fff'}}
+                     className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-full m-4">
+                  <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on 01/01/2023</h3>
+                  <p className="mb-4 text-gray-600">I need this document to be typed and send as a pdf file within 2 days...</p>
+                  <div className="flex flex-col justify-between items-center sm:flex-row">
+                    <p className="text-green-400 font-extrabold"></p>
+                    <button className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
+                  </div>
+                </div>
+
+                <div style={{backgroundColor: '#fff'}}
+                     className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-full m-4">
+                  <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on 01/01/2023</h3>
+                  <p className="mb-4 text-gray-600">I need this document to be typed and send as a pdf file within 2 days...</p>
+                  <div className="flex flex-col justify-between items-center sm:flex-row">
+                    <p className="text-green-400 font-extrabold"></p>
+                    <button className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
+                  </div>
+                </div>
+                
             </div>
-            <div className='flex-shrink-0'>
-               <Footer />
+              
+            {isOpen && (
+            <div className="fixed inset-0 flex items-center justify-center z-1000 ml-auto mr-auto">
+              <div className="bg-gray-300 w-5/6 mt-10 rounded-lg shadow-lg sm:w-3/6 p-7">
+                <div className="p-4">
+                <form>
+                <div className="mb-4">
+                  <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    // value={formValues.name}
+                    // onChange={handleInputChange}
+                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    // value={formValues.email}
+                    // onChange={handleInputChange}
+                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="message" className="block text-gray-700 font-semibold mb-2">
+                    Message
+                  </label>
+                  <textarea name="message" rows="6" class="resize-none w-full rounded-lg border border-blue-500/20 px-4 py-3 text-slate-500 focus:border-blue-500 focus:outline-none"></textarea>
+                </div>
+
+                <div className='flex flex-row justify-between'>
+                  <button
+                    onClick={closeModal}
+                    style={{backgroundColor: currentColor}}
+                    className="hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+                </div>
+              </div>
             </div>
+          )}
+
           </div>
         </div>
     </div>

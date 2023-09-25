@@ -18,7 +18,7 @@ function Login() {
           <div class="flex items-start">
             <a href="#" class="ml-auto text-sm text-indigo-700 hover:underline dark:text-indigo-500">Lost Password?</a>
           </div>
-          <button type="submit" class="w-full rounded-lg bg-indigo-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">Login</button>
+          <Link to={'/Dashboard/AllJobs'} type="submit" class="w-full rounded-lg bg-indigo-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">Login</Link>
           <div class="text-sm font-medium text-gray-500 dark:text-gray-300">Not registered? <Link to={'/Registration'} class="text-indigo-700 hover:underline dark:text-indigo-500">Create account</Link></div>
         </form>
       </div>

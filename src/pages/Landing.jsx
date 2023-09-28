@@ -167,7 +167,7 @@ function Landing() {
 <footer class="bg-slate-50/80 pt-16">
     <div class="mx-auto max-w-7xl px-8 md:px-6">
         <div class="flex flex-col justify-between border-t py-8 sm:flex-row">
-            <p class="text-sm text-slate-500">© Copyright 2022 <a href="#" class="text-slate-700 hover:text-blue-500"> ZED.zahidul</a> All rights reserved.</p>
+            <p class="text-sm text-slate-500">© Copyright 2023 <a href="#" class="text-slate-700 hover:text-blue-500"> SprintJobs</a> All rights reserved.</p>
             <div class="mt-4 flex items-center space-x-4 sm:mt-0">
                 <a href="#">
                     <ion-icon name="logo-facebook" class="text-2xl text-slate-500 hover:text-blue-500 duration-300"></ion-icon>

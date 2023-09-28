@@ -50,7 +50,7 @@ const AploadedJobs = () => {
             </TooltipComponent>
           </div>
           {activeMenu ? (
-            <div className="w-1/5 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
+            <div className="w-4/5 sm:w-1/5 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
               <Sidebar />
             </div>
           ) : (

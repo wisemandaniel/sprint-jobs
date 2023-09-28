@@ -10,8 +10,16 @@ import { Link } from 'react-router-dom';
 
 const AllJobs = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
+  const [user, setUser] = useState({})
+
+  const getUser = () => {
+    const userDta = localStorage.getItem('user')
+    const user = JSON.parse(userDta)
+    console.log('USER: ', user);
+  }
 
   useEffect(() => {
+    getUser()
     const currentThemeColor = localStorage.getItem('colorMode');
     const currentThemeMode = localStorage.getItem('themeMode');
     if (currentThemeColor && currentThemeMode) {
@@ -59,7 +67,7 @@ const AllJobs = () => {
             </TooltipComponent>
           </div>
           {activeMenu ? (
-            <div className="w-1/5 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
+            <div className="w-4/5 sm:w-1/5 fixed sidebar dark:bg-secondary-dark-bg bg-white ">
               <Sidebar />
             </div>
           ) : (

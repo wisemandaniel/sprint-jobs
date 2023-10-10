@@ -109,7 +109,21 @@ const AploadedJobs = () => {
                 <form>
                 <div className="mb-4">
                   <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
-                    Name
+                    Price
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    // value={formValues.name}
+                    // onChange={handleInputChange}
+                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
+                    Number of pages
                   </label>
                   <input
                     type="text"
@@ -123,7 +137,7 @@ const AploadedJobs = () => {
 
                 <div className="mb-4">
                   <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
-                    Email
+                    Image files
                   </label>
                   <input
                     type="email"
@@ -137,9 +151,9 @@ const AploadedJobs = () => {
 
                 <div className="mb-4">
                   <label htmlFor="message" className="block text-gray-700 font-semibold mb-2">
-                    Message
+                    Description
                   </label>
-                  <textarea name="message" rows="6" class="resize-none w-full rounded-lg border border-blue-500/20 px-4 py-3 text-slate-500 focus:border-blue-500 focus:outline-none"></textarea>
+                  <textarea name="message" rows="3" class="resize-none w-full rounded-lg border border-blue-500/20 px-4 py-3 text-slate-500 focus:border-blue-500 focus:outline-none"></textarea>
                 </div>
 
                 <div className='flex flex-row justify-between'>

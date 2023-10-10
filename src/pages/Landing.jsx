@@ -1,10 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from '../data/logo.jpg'
 import hero from '../data/images/hero.png'
 import about from '../data/images/about.png'
+import { useTranslation, initReactI18next } from "react-i18next";
 import { Link } from 'react-router-dom';
+import i18next from 'i18next';
 
 function Landing() {
+
+    const languages = [
+        {
+            code: 'EN',
+            name: 'EN'
+        },
+        {
+            code: 'FR',
+            name: 'FR'
+        }
+    ]
+
+    const { t } = useTranslation();
+    const [selectedValue, setSelectedValue] = useState('');
+
+    const handleSelectChange = (event) => {
+        setSelectedValue(event.target.value);
+        i18next.changeLanguage(event.target.value)
+    };
+
+
   return (
     <div>
       <div x-data="{navbarOpen: false}" className="absolute sticky left-0 top-0 z-50 bg-white/90 w-full backdrop-blur">
@@ -19,8 +42,25 @@ function Landing() {
             <div className="flex w-full items-center justify-between">
 
             </div>
-            <div class="flex">
-                <Link to={'Registration'} class="mr-10 hidden rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 duration-200 hover:bg-blue-600 sm:block lg:mr-0">Register</Link>
+            <div className="flex justify-between items-center">
+            <div className="relative inline-block">
+      <select
+        className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500"
+        onChange={handleSelectChange}
+        value={selectedValue}
+      >
+        {languages.map((language) => (
+          <option key={language.code} value={language.code}>{language.name}</option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path d="M10 12l-6-6 1.5-1.5L10 9l4.5-4.5L16 6l-6 6z" />
+        </svg>
+        {selectedValue && <span className="">{selectedValue}</span>}
+      </div>
+    </div>
+                <Link to={'Registration'} class="ml-10 mr-10 hidden rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 duration-200 hover:bg-blue-600 sm:block lg:mr-0">{t('Register_text')}</Link>
             </div>
         </div>
     </div>

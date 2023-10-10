@@ -61,7 +61,7 @@ const Dashboard = () => {
               {themeSettings && (<ThemeSettings />)}
               hey
             </div>
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </div>
     </div>

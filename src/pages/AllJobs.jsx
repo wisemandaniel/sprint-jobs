@@ -92,9 +92,9 @@ const AllJobs = () => {
 
                 <div style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
                   <div></div>
-                  <button onClick={openModal} style={{backgroundColor: currentColor}} className='py-2 px-5 rounded-md text-white'>
+                  {/* <button onClick={openModal} style={{backgroundColor: currentColor}} className='py-2 px-5 rounded-md text-white'>
                     Add a job
-                  </button>
+                  </button> */}
                 </div>
 
                 <div style={{backgroundColor: '#fff'}}

@@ -1,3 +1,20 @@
 {
-    "Register_text": "Inscription"
+    "Register_text": "Inscription",
+    "welcome_text_1" : "Faites taper vos documents",
+    "in_seconds" : "en quelques secondes",
+    "base_text": "Téléchargez votre document sous forme d'image à saisir au format Word ou PDF dans le confort de votre maison.",
+    "get_started": "Commencer",
+    "reg_now": "S'inscrire maintenant",
+    "brief_text": "Nous fournissons une plate-forme permettant aux utilisateurs de télécharger leur document et de le faire saisir par d'autres utilisateurs rémunérés.",
+    "second_point": "Vos documents sont dactylographiés par des professionnels dans les délais.",
+    "first_point": "Télécharger le document au format image.",
+    "get_in_touch": "PRENEZ CONTACT AVEC NOUS",
+    "have_worry": "Avez-vous des inquiétudes ou des problèmes ? alors viens nous voir maintenant",
+    "location": "Notre emplacement",
+    "phone": "numéro de téléphone",
+    "email": "E-mail",
+    "send_message": "Envoyer le message",
+    "your_name": "Votre nom",
+    "your_password": "Votre mot de passe",
+    "your_email": "Votre email"
 }

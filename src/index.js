@@ -16,7 +16,8 @@ i18n
   .use(LanguageDetector)
   .use(HttpApi)
   .init({
-    fallbackLng: "en",
+    supportedLngs: ['EN', 'FR'],
+    fallbackLng: "EN",
     detection: {
       order: ['cookie', 'htmlTag', 'localStorage', 'path', 'subdomain'],
       caches: ['cookie']
@@ -26,12 +27,6 @@ i18n
     },
     react: { useSuspense: false }
   });
-
-// function App() {
-  // const { t } = useTranslation();
-
-  // return <h2>{t('Welcome_to_React')}</h2>;
-// }
 
 ReactDOM.render(
   <React.StrictMode>

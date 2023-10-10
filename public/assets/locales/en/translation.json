@@ -1,3 +1,20 @@
 {
-    "Register_text": "Register"
+    "Register_text": "Register",
+    "welcome_text_1" : "Get your documents typed",
+    "in_seconds" : "in seconds",
+    "base_text": "Upload your document either as an image to be typed into word or pdf from the comfort of your home.",
+    "get_started": "Get Started",
+    "reg_now": "Register Now",
+    "brief_text": "We provide a platform for users to upload their document and get them typed by other users who get paid.",
+    "second_point": "Your documents are typed by professionals in due time.",
+    "first_point": "Upload document in image format.",
+    "get_in_touch": "GET IN TOUCH WITH US",
+    "have_worry": "Do you have any worry or any issues? then get to us now",
+    "location": "Our Location",
+    "phone": "Phone number",
+    "email": "Email",
+    "send_message": "Send Message",
+    "your_name": "Your Name",
+    "your_password": "Your Passsword",
+    "your_email": "Your email"
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from '../data/logo.jpg'
 import hero from '../data/images/hero.png'
 import about from '../data/images/about.png'
@@ -7,6 +7,11 @@ import { Link } from 'react-router-dom';
 import i18next from 'i18next';
 
 function Landing() {
+
+    useEffect(() => {
+        setSelectedValue('EN');
+        i18next.changeLanguage('EN')
+    }, [])
 
     const languages = [
         {

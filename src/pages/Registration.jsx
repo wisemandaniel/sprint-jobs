@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import baseUrl from './url';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 
 function Registration() {
   
@@ -66,7 +67,8 @@ function Registration() {
       };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-slate-100">
+    <>
+       <div className="w-full h-screen flex justify-center items-center bg-slate-100">
     <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-4 shadow-lg shadow-indigo-600/10 dark:border-gray-700 dark:bg-gray-800 sm:p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <h5 className="text-xl text-center font-bold text-gray-900 dark:text-white">{t('create_account')}</h5>
@@ -114,35 +116,13 @@ function Registration() {
           <div className="text-sm font-medium text-gray-500 dark:text-gray-300">{t('already_have_an_Account')} <Link to={'/Login'} className="text-indigo-700 hover:underline dark:text-indigo-500">
             {t('login')}</Link></div>
         </form>
-        {isRegistrationSuccessful && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-green-100 p-4 rounded shadow-md w-5/6 sm:w-3/12">
-            <p className="mb-4 text-center text-green-500 font-bold text-xl">Please check your email and follow the instructions to confirm your email address.</p>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto mr-auto"
-              onClick={handleCloseModal}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-        {error && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-red-200 p-4 rounded shadow w-5/6 sm:w-3/12">
-            <p className="text-red-700 text-center">{error}</p>
-            <button
-              className="mt-4 px-4 py-1 bg-blue-500 text-white rounded justify-end"
-              onClick={() => setError('')}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
       </div>
       
 </div>
+{loading && <div>
+    <LoadingSpinner />
+</div>}
+    </>
   )
 }
 

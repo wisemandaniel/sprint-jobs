@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import baseUrl from './url';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 
 function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate()
+  // const [loading, setLoading] = useState(false)
 
   const [username, setUsername] = useState('');
       const [email, setEmail] = useState('');
@@ -67,7 +69,8 @@ function Login() {
       };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-slate-100">
+    <>
+       <div className="w-full h-screen flex justify-center items-center bg-slate-100">
     <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-4 shadow-lg shadow-indigo-600/10 dark:border-gray-700 dark:bg-gray-800 sm:p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <h5 className="text-xl text-center font-bold text-gray-900 dark:text-white">{t('login_to_your_account')}</h5>
@@ -115,6 +118,10 @@ function Login() {
       </div>
       
 </div>
+{loading && <div>
+    <LoadingSpinner />
+</div>}
+    </>
   )
 }
 

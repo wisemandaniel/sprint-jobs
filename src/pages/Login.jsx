@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
 import baseUrl from './url';
 
 function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate()
 
   const [username, setUsername] = useState('');
@@ -68,33 +70,34 @@ function Login() {
     <div className="w-full h-screen flex justify-center items-center bg-slate-100">
     <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-4 shadow-lg shadow-indigo-600/10 dark:border-gray-700 dark:bg-gray-800 sm:p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <h5 className="text-xl text-center font-bold text-gray-900 dark:text-white">Login to your account</h5>
+          <h5 className="text-xl text-center font-bold text-gray-900 dark:text-white">{t('login_to_your_account')}</h5>
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300">Your email</label>
+            <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300">{t('your_email')}</label>
             <input 
                  value={email}
                  onChange={handleEmailChange}
                  type="email" 
                  name="email" 
-                 id="email" className="outline-none block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400" placeholder="Gmail or Phone" 
+                 id="email" className="outline-none block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400" placeholder="Gmail" 
                  required="" />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300">Your password</label>
+            <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300">{t('your_password')}</label>
             <input 
                  value={password}
                  onChange={handlePasswordChange}
                  type="password" 
                  name="password" 
                  id="password" 
-                 placeholder="Password" 
+                 placeholder={t('password')} 
                  className="outline-none block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400" required="" />
           </div>
           <div className="flex items-start">
-            <a href="#" className="ml-auto text-sm text-indigo-700 hover:underline dark:text-indigo-500">Lost Password?</a>
+            <a href="#" className="ml-auto text-sm text-indigo-700 hover:underline dark:text-indigo-500">{t('lost_password')}</a>
           </div>
-          <button type="submit" className="w-full rounded-lg bg-indigo-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">Login</button>
-          <div className="text-sm font-medium text-gray-500 dark:text-gray-300">Not registered? <Link to={'/Registration'} className="text-indigo-700 hover:underline dark:text-indigo-500">Create account</Link></div>
+          <button type="submit" className="w-full rounded-lg bg-indigo-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">{t
+          ('login')}</button>
+          <div className="text-sm font-medium text-gray-500 dark:text-gray-300">{t('not_reg')} <Link to={'/Registration'} className="text-indigo-700 hover:underline dark:text-indigo-500">{t('create_Account')}</Link></div>
         </form>
         {error && (
         <div className="fixed inset-0 flex items-center justify-center z-50">

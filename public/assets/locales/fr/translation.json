@@ -16,5 +16,15 @@
     "send_message": "Envoyer le message",
     "your_name": "Votre nom",
     "your_password": "Votre mot de passe",
-    "your_email": "Votre email"
+    "your_email": "Votre email",
+    "create_account": "Créer un compte",
+    "password": "mot de passe",
+    "username": "nom d'utilisateur",
+    "your_username": "Ton nom d'utilisateur",
+    "login": "Se connecter",
+    "already_have_an_Account": "Déjà enregistré?",
+    "login_to_your_account": "Connectez-vous à votre compte",
+    "lost_password": "Mot de passe perdu?",
+    "not_reg": "Non enregistré?",
+    "create_Account": "Créer un compte"
 }

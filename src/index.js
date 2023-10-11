@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { ContextProvider } from './contexts/ContextProvider';
 import i18n from "i18next";
@@ -21,15 +21,22 @@ i18n
     },
     backend: {
       loadPath: '/assets/locales/{{lng}}/translation.json'
-    },
-    react: { useSuspense: false }
+    }
   });
 
+  const loadingMarkup = (
+    <div>
+      <p>Loading</p>
+    </div>
+  ); 
+
 ReactDOM.render(
-  <React.StrictMode>
-    <ContextProvider>
-      <App />
-    </ContextProvider>
-  </React.StrictMode>,
+  <Suspense fallback={loadingMarkup}>
+    <React.StrictMode>
+      <ContextProvider>
+        <App />
+      </ContextProvider>
+    </React.StrictMode>
+  </Suspense>,
   document.getElementById('root'),
 );

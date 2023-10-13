@@ -3,8 +3,25 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import baseUrl from './url';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
+import Modal from '../components/Modal/Modal';
 
 function Registration() {
+
+  const [showModal, setShowModal] = useState(false);
+
+  function openModal() {
+    console.log('opening modal');
+    setShowModal(true);
+  }
+
+  function closeModal() {
+    console.log('closing Modal');
+    setShowModal(false);
+  }
+
+  
+      const [visible, setVisible] = useState(true);
+      const [errorMessage, setErrorMessage] = useState('');
   
       const { t } = useTranslation();
 
@@ -25,10 +42,6 @@ function Registration() {
 
       const handlePasswordChange = (event) => {
         setPassword(event.target.value);
-      };
-
-      const handleCloseModal = () => {
-        setRegistrationSuccessful(false);
       };
     
 
@@ -55,12 +68,11 @@ function Registration() {
             setLoading(false);
             setRegistrationSuccessful(true);
           } else {
-            const errorData = await response.json();
-            setError(errorData.message);
+            const errorData = await response.json()
+            setLoading(false);
+            setErrorMessage(errorData.message);
+            setShowModal(true);
           }
-        } catch (error) {
-          setLoading(false);
-          console.error('Error registering user:', error);
         } finally {
           setLoading(false);
         }
@@ -122,6 +134,12 @@ function Registration() {
 {loading && <div>
     <LoadingSpinner />
 </div>}
+        {showModal && <Modal>
+          <div className="bg-white md:w-5/12 w-10/12 max-w-screen-md rounded-lg m-4 flex flex-col relative shadow-2xl p-4 items-center justify-center">
+            <p className=' text-center text-xl text-red-400'>{errorMessage}</p>
+            <button onClick={() => setShowModal(false)} className='mt-6 bg-green-500 w-2/6 text-white text-center rounded-md'>close</button>
+          </div>
+        </Modal>}
     </>
   )
 }

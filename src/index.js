@@ -7,6 +7,7 @@ import './index.css';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpApi from 'i18next-http-backend';
 import App from './App';
+import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 
 i18n
   .use(initReactI18next) 
@@ -26,7 +27,7 @@ i18n
 
   const loadingMarkup = (
     <div>
-      <p>Loading</p>
+      <LoadingSpinner />
     </div>
   ); 
 

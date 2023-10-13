@@ -5,12 +5,14 @@ import { Button } from '.';
 import { userProfileData } from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
 import avatar from '../data/avatar.jpg';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
   const { currentColor } = useStateContext();
+  const navigate = useNavigate()
 
   return (
-    <div className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg w-96">
+    <div className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg sm:w-2/6 w-5/6">
       <div className="flex justify-between items-center">
         <p className="font-semibold text-lg dark:text-gray-200">User Profile</p>
         <Button
@@ -50,15 +52,18 @@ const UserProfile = () => {
           </div>
         ))}
       </div>
-      <div className="mt-5">
-        <Button
-          color="white"
-          bgColor={currentColor}
-          text="Logout"
-          borderRadius="10px"
-          width="full"
-        />
-      </div>
+      <div className="mt-5 justify-center items-center">
+        <button
+            type="button"
+            onClick={() => {
+              localStorage.removeItem('user')
+              navigate.navigate('/Login')
+            }}
+            className={'text-xl p-3 w-4/6 hover:drop-shadow-xl justify-center items-center bg-red-400 text-white rounded-md font-bold'}
+            >
+              {'Logout'}
+          </button>
+        </div>
     </div>
 
   );

@@ -7,20 +7,7 @@ import Modal from '../components/Modal/Modal';
 
 function Registration() {
 
-  const [showModal, setShowModal] = useState(false);
-
-  function openModal() {
-    console.log('opening modal');
-    setShowModal(true);
-  }
-
-  function closeModal() {
-    console.log('closing Modal');
-    setShowModal(false);
-  }
-
-  
-      const [visible, setVisible] = useState(true);
+      const [showModal, setShowModal] = useState(false);
       const [errorMessage, setErrorMessage] = useState('');
   
       const { t } = useTranslation();

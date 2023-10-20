@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
-import { Navbar, Footer, Sidebar, ThemeSettings } from '../components';
+import { Navbar, Sidebar, ThemeSettings } from '../components';
 import '../App.css';
 
 import { useStateContext } from '../contexts/ContextProvider';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { Link } from 'react-router-dom';
+import Modal from '../components/Modal/Modal';
 
 const AploadedJobs = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -29,6 +29,10 @@ const AploadedJobs = () => {
   const closeModal = () => {
     setIsOpen(false);
   };
+
+  const postJob = () => {
+    
+  }
 
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
@@ -101,81 +105,105 @@ const AploadedJobs = () => {
                 </div>
                 
             </div>
-              
-            {isOpen && (
-            <div className="fixed inset-0 flex items-center justify-center z-1000 ml-auto mr-auto">
-              <div className="bg-gray-300 w-5/6 mt-10 rounded-lg shadow-lg sm:w-3/6 p-7">
-                <div className="p-4">
-                <form>
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
-                    Price
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    // value={formValues.name}
-                    // onChange={handleInputChange}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
-                    Number of pages
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    // value={formValues.name}
-                    // onChange={handleInputChange}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
-                    Image files
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    // value={formValues.email}
-                    // onChange={handleInputChange}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="message" className="block text-gray-700 font-semibold mb-2">
-                    Description
-                  </label>
-                  <textarea name="message" rows="3" class="resize-none w-full rounded-lg border border-blue-500/20 px-4 py-3 text-slate-500 focus:border-blue-500 focus:outline-none"></textarea>
-                </div>
-
-                <div className='flex flex-row justify-between'>
-                  <button
-                    onClick={closeModal}
-                    style={{backgroundColor: currentColor}}
-                    className="hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </form>
-                </div>
+            
+            <>
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 overflow-y-auto scrollbar-hide relative z-10">
+            <div className="max-h-96 overflow-y-auto">
+              <h2 className="text-2xl font-bold mb-6">Add Job</h2>
+              <form>
+              <div className="mb-4">
+                <label htmlFor="firstName" className="block mb-2 font-bold">
+                  Number of pages
+                </label>
+                <input
+                  placeholder='Enter total number of estimated pages'
+                  type="number"
+                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
               </div>
+              <div className="mb-4">
+                <label htmlFor="lastName" className="block mb-2 font-bold">
+                  Estimated Duration
+                </label>
+                <input
+                  placeholder='Enter total number of estimated days'
+                  type="number"
+                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="mb-4 relative">
+                  <label htmlFor="price" className="block mb-2 font-bold">
+                    Estimated Price
+                  </label>
+                  <div className="relative flex items-center">
+                    <input
+                      placeholder='Calculated from total number of pages'
+                      type="text"
+                      className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
+                    />
+                    <span className="absolute right-3 text-gray-500">XAF</span>
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="documentType" className="block mb-2 font-bold">
+                    Document Type
+                  </label>
+                  <select
+                    id="documentType"
+                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="passport">EXCEL</option>
+                    <option value="driverLicense">PDF</option>
+                    <option value="idCard">POWERPOINT</option>
+                  </select>
+                </div>
+              <div className="mb-4">
+                <label htmlFor="address" className="block mb-2 font-bold">
+                  Description
+                </label>
+                <input
+                  type="text"
+                  placeholder='Enter brief description of what you want'
+                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="country" className="block mb-2 font-bold">
+                  Images
+                </label>
+                <input
+                  type="file"
+                  id="images"
+                  multiple
+                  accept="image/*"
+                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </form>
             </div>
-          )}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                onClick={() => setIsOpen(false)}
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
+              >
+                Upload
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
 
           </div>
         </div>

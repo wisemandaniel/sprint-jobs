@@ -49,21 +49,23 @@ function Login() {
             },
             body: JSON.stringify(user),
           });
-    
+        
           if (response.ok) {
-            setLoading(false);
-            setLoginSuccessful(true);
-            const user = await response.json()
+            const user = await response.json();
             console.log('user: ', user);
-            localStorage.setItem('user', JSON.stringify(user))
+            localStorage.setItem('user', JSON.stringify(user));
             navigate("/Dashboard/AllJobs");
           } else {
-            const errorData = await response.json()
-            setLoading(false);
+            const errorData = await response.json();
+            console.log('ERROR: ', errorData);
             setErrorMessage(errorData.message);
             setShowModal(true);
           }
-        }  finally {
+        } catch (error) {
+          console.log('ERROR: ', error);
+          setErrorMessage(error.message);
+          setShowModal(true);
+        } finally {
           setLoading(false);
         }
       };
@@ -82,7 +84,7 @@ function Login() {
                  type="email" 
                  name="email" 
                  id="email" className="outline-none block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400" placeholder="Gmail" 
-                 required="" />
+                 required />
           </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300">{t('your_password')}</label>
@@ -93,7 +95,7 @@ function Login() {
                  name="password" 
                  id="password" 
                  placeholder={t('password')} 
-                 className="outline-none block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400" required="" />
+                 className="outline-none block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400" required />
           </div>
           <div className="flex items-start">
             <a href="#" className="ml-auto text-sm text-indigo-700 hover:underline dark:text-indigo-500">{t('lost_password')}</a>
@@ -107,6 +109,7 @@ function Login() {
           <div className="bg-red-200 p-4 rounded shadow w-5/6 sm:w-3/12">
             <p className="text-red-700 text-center">{error}</p>
             <button
+              type="submit"
               className="mt-4 px-4 py-1 bg-blue-500 text-white rounded justify-end"
               onClick={() => setError('')}
             >
@@ -124,7 +127,7 @@ function Login() {
         {showModal && <Modal>
           <div className="bg-white md:w-5/12 w-10/12 max-w-screen-md rounded-lg m-4 flex flex-col relative shadow-2xl p-4 items-center justify-center">
             <p className=' text-center text-xl text-red-400'>{errorMessage}</p>
-            <button onClick={() => setShowModal(false)} className='mt-6 bg-green-500 w-2/6 text-white text-center rounded-md'>close</button>
+            <button onClick={() => setShowModal(false)} className='mt-6 bg-blue-500 w-2/6 text-white text-center rounded-md'>close</button>
           </div>
         </Modal>}
     </>

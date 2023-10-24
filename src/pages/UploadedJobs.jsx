@@ -6,12 +6,26 @@ import '../App.css';
 import { useStateContext } from '../contexts/ContextProvider';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+import baseUrl from './url';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import Modal from '../components/Modal/Modal';
 
 const AploadedJobs = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
 
+  const [token, setToken] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState(false);
+
   useEffect(() => {
+    getUploadedJobs()
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
+    
+    setToken(user.accessToken)
+
     const currentThemeColor = localStorage.getItem('colorMode');
     const currentThemeMode = localStorage.getItem('themeMode');
     if (currentThemeColor && currentThemeMode) {
@@ -26,12 +40,148 @@ const AploadedJobs = () => {
     setIsOpen(true);
   };
 
-  const closeModal = () => {
-    setIsOpen(false);
+  const postJob = (e) => {
+    e.preventDefault();
+    console.log('IMAGES: ', formValues.images);
+    if (formValues.images.length > 0 && formValues.estimatedPrice && formValues.estimatedDuration && formValues.numberOfPages && formValues.documentType && formValues.description) {
+      uploadImage(formValues.images);
+    } else {
+      setErrorMessage('Please select images and fill all information')
+      setShowModal(true)
+      setError(true)
+    }
+  }
+  
+  const [selectedImages] = useState([]);
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setFormValues((prevFormValues) => ({
+      ...prevFormValues,
+      images: files,
+    }));
   };
 
-  const postJob = () => {
-    
+  const [formValues, setFormValues] = useState({
+    numberOfPages: '',
+    estimatedDuration: '',
+    estimatedPrice: '',
+    documentType: 'PDF',
+    description: '',
+    images: [],
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'numberOfPages') {
+      const calculatedPrice = value * 10;
+      setFormValues((prevFormValues) => ({
+        ...prevFormValues,
+        [name]: value,
+        estimatedPrice: calculatedPrice,
+      }));
+    } else {
+      setFormValues((prevFormValues) => ({
+        ...prevFormValues,
+        [name]: value,
+      }));
+    }
+  };
+
+  const getUploadedJobs = async () => {
+    try {
+      setLoading(false)
+      const response = await fetch(`${baseUrl}protected/jobs/created?pageNo=${0}&pageSize=${10}&taken=false`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log('JOBS: ', responseData);
+      } else {
+        // const errorResponse = await response.json();
+        // throw new Error(errorResponse);
+      }
+    } catch (error) {
+      console.log('error: ', error.message);
+    }
+  }
+
+  const uploadJobInfo = async (imageId) => {
+    setLoading(true)
+
+    const data = {
+      "amount": parseInt(formValues.estimatedPrice),
+      "currency": "XAF",
+      "description": formValues.description,
+      "documentType": formValues.documentType,
+      "imagesId": imageId,
+      "numberOfDays": parseInt(formValues.estimatedDuration),
+      "numbersOfPages": parseInt(formValues.numberOfPages),
+      "title": "string"
+    }
+
+    try {
+      setLoading(false)
+      const response = await fetch(`${baseUrl}protected/jobs`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        setErrorMessage('JOB created successfully!')
+        // setShowModal(true)
+        setError(false)
+        setIsOpen(false)
+      } else {
+        // const errorResponse = await response.json();
+        // throw new Error(errorResponse);
+      }
+    } catch (error) {
+      setError(true)
+      setLoading(false)
+      console.log('error: ', error.message);
+    }
+  }
+
+  const uploadImage = async (files) => {
+    setLoading(true)
+    const formData = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+
+    try {
+      setLoading(false)
+      const response = await fetch(`${baseUrl}protected/files/uploadJob`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        console.error('Image upload success.');
+        const responseData = await response.json();
+        uploadJobInfo(responseData.id)
+      } else {
+        console.error('Image upload failed.');
+      }
+    } catch (error) {
+      setError(true)
+      setLoading(false)
+      console.error('Error occurred during image upload:', error);
+    }
   }
 
   return (
@@ -107,8 +257,19 @@ const AploadedJobs = () => {
             </div>
             
             <>
+            {loading && <div>
+                <LoadingSpinner />
+            </div>}
+            {showModal && <Modal>
+              <div className="bg-white md:w-5/12 w-10/12 max-w-screen-md rounded-lg m-4 flex flex-col relative shadow-2xl p-4 items-center justify-center z-50">
+                {!error && <p className=' text-center text-xl text-green-400'>{errorMessage}</p>}
+                {error && <p className=' text-center text-xl text-red-400'>{errorMessage}</p>}
+                <button onClick={() => setShowModal(false)} className='mt-6 bg-green-500 w-2/6 text-white text-center rounded-md'>close</button>
+              </div>
+            </Modal>}
+
       {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-40">
           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 overflow-y-auto scrollbar-hide relative z-10">
             <div className="max-h-96 overflow-y-auto">
@@ -119,8 +280,11 @@ const AploadedJobs = () => {
                   Number of pages
                 </label>
                 <input
+                  onChange={handleInputChange}
+                  name="numberOfPages"
                   placeholder='Enter total number of estimated pages'
                   type="number"
+                  min="0"
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -129,8 +293,12 @@ const AploadedJobs = () => {
                   Estimated Duration
                 </label>
                 <input
+                  name="estimatedDuration"
+                  onChange={handleInputChange}
                   placeholder='Enter total number of estimated days'
-                  type="number"
+                  type="number" 
+                  min="0"
+                  onKeyDown="return event.keyCode !== 189"
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -140,6 +308,10 @@ const AploadedJobs = () => {
                   </label>
                   <div className="relative flex items-center">
                     <input
+                      value={formValues.estimatedPrice}
+                      disabled
+                      name="estimatedPrice"
+                      onChange={handleInputChange}
                       placeholder='Calculated from total number of pages'
                       type="text"
                       className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
@@ -152,12 +324,14 @@ const AploadedJobs = () => {
                     Document Type
                   </label>
                   <select
+                    name="documentType"
+                    onChange={handleInputChange}
                     id="documentType"
                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="passport">EXCEL</option>
-                    <option value="driverLicense">PDF</option>
-                    <option value="idCard">POWERPOINT</option>
+                    <option value="PDF">PDF</option>
+                    <option value="EXCEL">EXCEL</option>
+                    <option value="POWERPOINT">POWERPOINT</option>
                   </select>
                 </div>
               <div className="mb-4">
@@ -165,6 +339,8 @@ const AploadedJobs = () => {
                   Description
                 </label>
                 <input
+                  name="description"
+                  onChange={handleInputChange}
                   type="text"
                   placeholder='Enter brief description of what you want'
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -175,11 +351,13 @@ const AploadedJobs = () => {
                   Images
                 </label>
                 <input
+                  name="images"
                   type="file"
                   id="images"
                   multiple
                   accept="image/*"
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={handleImageChange}
                 />
               </div>
             </form>
@@ -194,7 +372,7 @@ const AploadedJobs = () => {
               </button>
               <button
                 type="submit"
-                onClick={() => setIsOpen(false)}
+                onClick={postJob}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
               >
                 Upload
@@ -204,9 +382,8 @@ const AploadedJobs = () => {
         </div>
       )}
     </>
-
-          </div>
-        </div>
+    </div>
+  </div>
     </div>
   );
 };

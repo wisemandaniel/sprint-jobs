@@ -43,7 +43,7 @@ function Registration() {
         setLoading(true);
         try {
           setLoading(true);
-          const response = await fetch(`${baseUrl}auth/register`, {
+          const response = await fetch(`${baseUrl}public/auth/register`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

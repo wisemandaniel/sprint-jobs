@@ -42,7 +42,7 @@ function Login() {
         setLoading(true);
         try {
           setLoading(true);
-          const response = await fetch(`${baseUrl}auth/login`, {
+          const response = await fetch(`${baseUrl}public/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

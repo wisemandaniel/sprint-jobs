@@ -31,7 +31,6 @@ function Registration() {
         setPassword(event.target.value);
       };
     
-
       const handleSubmit = async (event) => {
         event.preventDefault();
         const user = {

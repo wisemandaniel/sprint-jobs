@@ -82,7 +82,7 @@ const Sidebar = () => {
                     <span className="capitalize ">{'All Jobs'}</span>
                   </NavLink>
               </div>}
-              {role === 'ADMIN' || role === 'ROLE_USER' && <div>
+              {role === 'ADMIN' || role === 'USER' && <div>
                   <NavLink
                     to={`/Dashboard/UploadedJobs`}
                     key={'Uploaded Jobs'}

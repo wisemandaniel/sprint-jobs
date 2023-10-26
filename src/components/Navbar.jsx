@@ -1,13 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { FiShoppingCart } from 'react-icons/fi';
-import { BsChatLeft } from 'react-icons/bs';
-import { RiNotification3Line } from 'react-icons/ri';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
-import avatar from '../data/avatar.jpg';
-import { Cart, Chat, Notification, UserProfile } from '.';
+import { UserProfile } from '.';
 import { useStateContext } from '../contexts/ContextProvider';
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
@@ -48,6 +44,22 @@ const Navbar = () => {
     }
   }, [screenSize]);
 
+  
+  const [user, setUser] = useState({})
+  const [role, setRole] = useState('')
+
+  const getUser = () => {
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
+    setUser(user)
+    setRole(user.roles[0].name)
+    console.log('USER: ', user);
+  }
+
+  useEffect(() => {
+    getUser()
+  }, [])
+
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
 
   return (
@@ -60,14 +72,9 @@ const Navbar = () => {
             className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
             onClick={() => handleClick('userProfile')}
           >
-            <img
-              className="rounded-full w-8 h-8"
-              src={avatar}
-              alt="user-profile"
-            />
             <p>
               <span className="text-gray-400 font-bold ml-1 text-14">
-                Ndzo
+                {user.username}
               </span>
             </p>
             <MdKeyboardArrowDown className="text-gray-400 text-14" />

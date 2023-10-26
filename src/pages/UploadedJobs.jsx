@@ -10,6 +10,88 @@ import baseUrl from './url';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import Modal from '../components/Modal/Modal';
 
+const Card = ({ item }) => {
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const openModal = (item) => {
+    setSelectedItem(item);
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+  };
+
+  return (
+    <div>
+        <div style={{backgroundColor: '#fff'}}
+                className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-3/6 m-4">
+            <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
+            <p className="mb-4 text-gray-600">{item.description}</p>
+            <div className="flex flex-col justify-between items-center sm:flex-row">
+              <p className="text-green-400 font-extrabold"></p>
+              <button onClick={() => openModal(item)} className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
+            </div>
+        </div>
+      
+    
+
+        {selectedItem && (
+        <div className="fixed inset-0 flex items-center justify-center z-40">
+          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
+            <div className="max-h-96 overflow-y-auto">
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Number of days: </p> 
+                 <h2 className="text-2xl font-bold mb-6">{item.numberOfDays}</h2> 
+              </div>
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Number of pages: </p> 
+                 <h2 className="text-2xl font-bold mb-6">{item.numbersOfPages}</h2> 
+              </div>
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Amount: </p> 
+                 <h2 className="text-2xl font-bold mb-6 text-green-400">{item.amount} { item.currency}</h2> 
+              </div>
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Document type: </p> 
+                 <h2 className="text-2xl font-bold mb-6">{item.documentType}</h2> 
+              </div>
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Status: </p> 
+                 {item.jobTaken && <h2 className="text-2xl text-green-400 font-bold mb-6">Started</h2>}  
+                 {!item.jobTaken && <h2 className="text-2xl text-red-400 font-bold mb-6">Not started</h2>} 
+              </div>
+              <div className="flex justify-end mt-8">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
+              >
+                Cancel
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Modal2 = ({ item, closeModal }) => {
+  return (
+    <div className="modal">
+      <div className="modal-content">
+        <h3>Uploaded on {item.createdAt}</h3>
+        <p>{item.description}</p>
+        <button className="close-button" onClick={closeModal}>
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
 const AploadedJobs = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
 
@@ -20,11 +102,11 @@ const AploadedJobs = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    getUploadedJobs()
     const userData = localStorage.getItem('user')
     const user = JSON.parse(userData)
     
     setToken(user.accessToken)
+    getUploadedJobs()
 
     const currentThemeColor = localStorage.getItem('colorMode');
     const currentThemeMode = localStorage.getItem('themeMode');
@@ -88,20 +170,26 @@ const AploadedJobs = () => {
     }
   };
 
+  const [data, setData] = useState([])
+
   const getUploadedJobs = async () => {
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
+
     try {
       setLoading(false)
       const response = await fetch(`${baseUrl}protected/jobs/created?pageNo=${0}&pageSize=${10}&taken=false`, {
         method: 'GET',
         headers: {
-          'Authorization': 'Bearer ' + token,
+          'Authorization': 'Bearer ' + user.accessToken,
           'Content-Type': 'application/json'
         }
       });
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log('JOBS: ', responseData);
+        setData(responseData.jobResponseDTOList)
+        console.log('JOBS: ', responseData.jobResponseDTOList);
       } else {
         // const errorResponse = await response.json();
         // throw new Error(errorResponse);
@@ -184,6 +272,12 @@ const AploadedJobs = () => {
     }
   }
 
+  const cardsData = [
+    { title: 'Card 1', description: 'Description for Card 1' },
+    { title: 'Card 2', description: 'Description for Card 2' },
+    { title: 'Card 3', description: 'Description for Card 3' }
+  ];
+
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
         <div className="flex relative dark:bg-main-dark-bg">
@@ -234,26 +328,10 @@ const AploadedJobs = () => {
                   </button>
                 </div>
 
-                <div style={{backgroundColor: '#fff'}}
-                     className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-full m-4">
-                  <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on 01/01/2023</h3>
-                  <p className="mb-4 text-gray-600">I need this document to be typed and send as a pdf file within 2 days...</p>
-                  <div className="flex flex-col justify-between items-center sm:flex-row">
-                    <p className="text-green-400 font-extrabold"></p>
-                    <button className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
-                  </div>
-                </div>
+                {data.map((card, index) => (
+                  <Card item={card} />
+                ))}
 
-                <div style={{backgroundColor: '#fff'}}
-                     className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-full m-4">
-                  <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on 01/01/2023</h3>
-                  <p className="mb-4 text-gray-600">I need this document to be typed and send as a pdf file within 2 days...</p>
-                  <div className="flex flex-col justify-between items-center sm:flex-row">
-                    <p className="text-green-400 font-extrabold"></p>
-                    <button className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
-                  </div>
-                </div>
-                
             </div>
             
             <>

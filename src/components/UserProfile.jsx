@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 
 import { Button } from '.';
 import { userProfileData } from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
-import avatar from '../data/avatar.jpg';
 import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
   const { currentColor } = useStateContext();
   const navigate = useNavigate()
+
+  const [user, setUser] = useState({})
+  const [role, setRole] = useState('')
+
+  const getUser = () => {
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
+    setUser(user)
+    setRole(user.roles[0].name)
+    console.log('USER: ', user);
+  }
+
+  useEffect(() => {
+    getUser()
+  }, [])
 
   return (
     <div className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg sm:w-2/6 w-5/6">
@@ -24,27 +38,14 @@ const UserProfile = () => {
         />
       </div>
       <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">
-        <img
-          className="rounded-full h-24 w-24"
-          src={avatar}
-          alt="user-profile"
-        />
         <div>
-          <p className="font-semibold text-xl dark:text-gray-200"> Michael Roberts </p>
-          <p className="text-gray-500 text-sm dark:text-gray-400">  Administrator   </p>
+          <p className="font-semibold text-xl dark:text-gray-200">{user.username}</p>
+          {role === 'USER' && <p className="text-gray-500 text-sm dark:text-gray-400">USER</p>}
         </div>
       </div>
       <div>
         {userProfileData.map((item, index) => (
           <div key={index} className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  dark:hover:bg-[#42464D]">
-            <button
-              type="button"
-              style={{ color: item.iconColor, backgroundColor: item.iconBg }}
-              className=" text-xl rounded-lg p-3 hover:bg-light-gray"
-            >
-              {item.icon}
-            </button>
-
             <div>
               <p className="font-semibold dark:text-gray-200 ">{item.title}</p>
               <p className="text-gray-500 text-sm dark:text-gray-400">{item.desc}</p>
@@ -54,12 +55,12 @@ const UserProfile = () => {
       </div>
       <div className="mt-5 justify-center items-center">
         <button
-            type="button"
+            type="submit"
             onClick={() => {
               localStorage.removeItem('user')
-              navigate.navigate('/Login')
+              navigate('/Login')
             }}
-            className={'text-xl p-3 w-4/6 hover:drop-shadow-xl justify-center items-center bg-red-400 text-white rounded-md font-bold'}
+            className={'text-xl p-3 w-full hover:drop-shadow-xl justify-center items-center bg-red-400 text-white rounded-md font-bold'}
             >
               {'Logout'}
           </button>

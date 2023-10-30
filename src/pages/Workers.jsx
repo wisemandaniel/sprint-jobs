@@ -111,49 +111,27 @@ const Workers = () => {
   const postJob = (e) => {
     e.preventDefault();
     console.log('IMAGES: ', formValues.images);
-    if (formValues.images.length > 0 && formValues.estimatedPrice && formValues.estimatedDuration && formValues.numberOfPages && formValues.documentType && formValues.description) {
-      uploadImage(formValues.images);
+    if (formValues.username && formValues.email && formValues.password) {
+        addWorker();
     } else {
-      setErrorMessage('Please select images and fill all information')
+      setErrorMessage('Please fill all information')
       setShowModal(true)
       setError(true)
     }
   }
-  
-  const [selectedImages] = useState([]);
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setFormValues((prevFormValues) => ({
-      ...prevFormValues,
-      images: files,
-    }));
-  };
 
   const [formValues, setFormValues] = useState({
-    numberOfPages: '',
-    estimatedDuration: '',
-    estimatedPrice: '',
-    documentType: 'PDF',
-    description: '',
-    images: [],
+    email: '',
+    username: '',
+    password: '',
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'numberOfPages') {
-      const calculatedPrice = value * 10;
-      setFormValues((prevFormValues) => ({
-        ...prevFormValues,
-        [name]: value,
-        estimatedPrice: calculatedPrice,
-      }));
-    } else {
       setFormValues((prevFormValues) => ({
         ...prevFormValues,
         [name]: value,
       }));
-    }
   };
 
   const [data, setData] = useState([])
@@ -174,8 +152,8 @@ const Workers = () => {
 
       if (response.ok) {
         const responseData = await response.json();
-        setData(responseData.jobResponseDTOList)
-        console.log('JOBS: ', responseData.jobResponseDTOList);
+        setData(responseData.userResponseDTOList)
+        console.log('WORKERS: ', responseData.userResponseDTOList);
       } else {
         // const errorResponse = await response.json();
         // throw new Error(errorResponse);
@@ -185,23 +163,18 @@ const Workers = () => {
     }
   }
 
-  const uploadJobInfo = async (imageId) => {
+  const addWorker = async (imageId) => {
     setLoading(true)
 
     const data = {
-      "amount": parseInt(formValues.estimatedPrice),
-      "currency": "XAF",
-      "description": formValues.description,
-      "documentType": formValues.documentType,
-      "imagesId": imageId,
-      "numberOfDays": parseInt(formValues.estimatedDuration),
-      "numbersOfPages": parseInt(formValues.numberOfPages),
-      "title": "string"
+      "email": formValues.email,
+      "username": formValues.username,
+      "password": formValues.password,
     }
 
     try {
       setLoading(false)
-      const response = await fetch(`${baseUrl}protected/jobs`, {
+      const response = await fetch(`${baseUrl}protected/user/worker`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -211,6 +184,7 @@ const Workers = () => {
       });
 
       if (response.ok) {
+        getWorkers()
         setErrorMessage('JOB created successfully!')
         // setShowModal(true)
         setError(false)
@@ -226,43 +200,13 @@ const Workers = () => {
     }
   }
 
-  const uploadImage = async (files) => {
-    setLoading(true)
-    const formData = new FormData();
+  const handleDelete = () => {
 
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
-    }
-
-    try {
-      setLoading(false)
-      const response = await fetch(`${baseUrl}protected/files/uploadJob`, {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        },
-        body: formData
-      });
-
-      if (response.ok) {
-        console.error('Image upload success.');
-        const responseData = await response.json();
-        uploadJobInfo(responseData.id)
-      } else {
-        console.error('Image upload failed.');
-      }
-    } catch (error) {
-      setError(true)
-      setLoading(false)
-      console.error('Error occurred during image upload:', error);
-    }
   }
 
-  const cardsData = [
-    { title: 'Card 1', description: 'Description for Card 1' },
-    { title: 'Card 2', description: 'Description for Card 2' },
-    { title: 'Card 3', description: 'Description for Card 3' }
-  ];
+  const handleUpdate = () => {
+
+  }
 
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
@@ -310,54 +254,58 @@ const Workers = () => {
                 <div style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
                   <div></div>
                   <button onClick={openModal} style={{backgroundColor: currentColor}} className='py-2 px-5 rounded-md text-white'>
-                    Add a job
+                    Add Worker
                   </button>
                 </div>
-
-                {data.length > 0 && <div className="overflow-x-auto">
+                
+                <div className="overflow-x-auto mt-16">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                         <tr>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Name
+                            Usename
                             </th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Email
                             </th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Role
+                            Date created
                             </th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                         {data.map((row, index) => (
                             <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center">
-                                <div className="flex-shrink-0 h-10 w-10">
-                                    <img className="h-10 w-10 rounded-full" src={row.avatar} alt="Avatar" />
-                                </div>
-                                <div className="ml-4">
-                                    <div className="text-sm font-medium text-gray-900">{row.name}</div>
-                                </div>
-                                </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">{row.email}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                {row.role}
-                                </span>
-                            </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        <div className="text-sm font-medium text-gray-900">{row.username}</div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900">{row.email}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    {`${new Date(row.createdAt).toLocaleString()}`}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
+                                        onClick={() => handleDelete(item.id)}>Delete</button>
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleUpdate(item.id)}>Update</button>
+                                </td>
                             </tr>
                         ))}
                         </tbody>
                     </table>
-                </div>}
+                </div>
 
                 { data.length == 0 &&
-                  <p className='text-white text-center text-2xl mt-24'>No job yet</p>
+                  <p className='text-white text-center text-2xl mt-24'>No worker yet</p>
                 }
 
             </div>
@@ -379,30 +327,18 @@ const Workers = () => {
           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 overflow-y-auto scrollbar-hide relative z-10">
             <div className="max-h-96 overflow-y-auto">
-              <h2 className="text-2xl font-bold mb-6">Add Job</h2>
+              <h2 className="text-2xl font-bold mb-6">Add a Worker</h2>
               <form>
               <div className="mb-4">
-                <label htmlFor="firstName" className="block mb-2 font-bold">
-                  Number of pages
-                </label>
-                <input
-                  onChange={handleInputChange}
-                  name="numberOfPages"
-                  placeholder='Enter total number of estimated pages'
-                  type="number"
-                  min="0"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div className="mb-4">
                 <label htmlFor="lastName" className="block mb-2 font-bold">
-                  Estimated Duration
+                  Username
                 </label>
                 <input
-                  name="estimatedDuration"
+                  value={formValues.username}
+                  name="username"
                   onChange={handleInputChange}
-                  placeholder='Enter total number of estimated days'
-                  type="number" 
+                  placeholder="Enter worker's username"
+                  type="text" 
                   min="0"
                   onKeyDown="return event.keyCode !== 189"
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -410,62 +346,34 @@ const Workers = () => {
               </div>
               <div className="mb-4 relative">
                   <label htmlFor="price" className="block mb-2 font-bold">
-                    Estimated Price
+                    User email
                   </label>
                   <div className="relative flex items-center">
                     <input
-                      value={formValues.estimatedPrice}
-                      disabled
-                      name="estimatedPrice"
+                      value={formValues.email}
+                      name="email"
                       onChange={handleInputChange}
-                      placeholder='Calculated from total number of pages'
+                      placeholder="Enter worker's email"
                       type="text"
                       className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
                     />
-                    <span className="absolute right-3 text-gray-500">XAF</span>
                   </div>
                 </div>
-                <div className="mb-4">
-                  <label htmlFor="documentType" className="block mb-2 font-bold">
-                    Document Type
+                <div className="mb-4 relative">
+                  <label htmlFor="price" className="block mb-2 font-bold">
+                    User password
                   </label>
-                  <select
-                    name="documentType"
-                    onChange={handleInputChange}
-                    id="documentType"
-                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="PDF">PDF</option>
-                    <option value="EXCEL">EXCEL</option>
-                    <option value="POWERPOINT">POWERPOINT</option>
-                  </select>
+                  <div className="relative flex items-center">
+                    <input
+                      value={formValues.password}
+                      name="password"
+                      onChange={handleInputChange}
+                      placeholder="Enter worker's password"
+                      type="text"
+                      className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
+                    />
+                  </div>
                 </div>
-              <div className="mb-4">
-                <label htmlFor="address" className="block mb-2 font-bold">
-                  Description
-                </label>
-                <input
-                  name="description"
-                  onChange={handleInputChange}
-                  type="text"
-                  placeholder='Enter brief description of what you want'
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="country" className="block mb-2 font-bold">
-                  Images
-                </label>
-                <input
-                  name="images"
-                  type="file"
-                  id="images"
-                  multiple
-                  accept="image/*"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  onChange={handleImageChange}
-                />
-              </div>
             </form>
             </div>
             <div className="flex justify-end">

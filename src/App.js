@@ -7,6 +7,7 @@ import {UploadedJobs} from './pages';
 import {AppliedJobs} from './pages';
 import {Workers} from './pages';
 import {Users} from './pages';
+
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 

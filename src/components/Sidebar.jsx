@@ -99,7 +99,7 @@ const Sidebar = () => {
              {(role === 'ROLE_ADMIN' || role === 'ROLE_WORKER') && <div>
                   <NavLink
                     to={`/Dashboard/AppliedJobs`}
-                    // key={'Applied Jobs'}
+                    key={'Applied Jobs'}
                     onClick={handleCloseSideBar}
                     style={({ isActive }) => ({
                       backgroundColor: isActive ? currentColor : '',

@@ -78,7 +78,7 @@ const Card = ({ item }) => {
   );
 };
 
-const AploadedJobs = () => {
+const Workers = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
 
   const [token, setToken] = useState('')
@@ -92,7 +92,7 @@ const AploadedJobs = () => {
     const user = JSON.parse(userData)
     
     setToken(user.accessToken)
-    getUploadedJobs()
+    getWorkers()
 
     const currentThemeColor = localStorage.getItem('colorMode');
     const currentThemeMode = localStorage.getItem('themeMode');
@@ -158,13 +158,13 @@ const AploadedJobs = () => {
 
   const [data, setData] = useState([])
 
-  const getUploadedJobs = async () => {
+  const getWorkers = async () => {
     const userData = localStorage.getItem('user')
     const user = JSON.parse(userData)
 
     try {
-      setLoading(false)
-      const response = await fetch(`${baseUrl}protected/jobs/created?pageNo=${0}&pageSize=${10}&taken=false`, {
+      setLoading(false) 
+      const response = await fetch(`${baseUrl}protected/users?pageNo=${0}&pageSize=${10}&role=ROLE_WORKER`, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + user.accessToken,
@@ -314,9 +314,47 @@ const AploadedJobs = () => {
                   </button>
                 </div>
 
-                {data.map((card, index) => (
-                  <Card item={card} />
-                ))}
+                {data.length > 0 && <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                        <tr>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Name
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Email
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Role
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                        {data.map((row, index) => (
+                            <tr key={index}>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                <div className="flex-shrink-0 h-10 w-10">
+                                    <img className="h-10 w-10 rounded-full" src={row.avatar} alt="Avatar" />
+                                </div>
+                                <div className="ml-4">
+                                    <div className="text-sm font-medium text-gray-900">{row.name}</div>
+                                </div>
+                                </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">{row.email}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                {row.role}
+                                </span>
+                            </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>}
 
                 { data.length == 0 &&
                   <p className='text-white text-center text-2xl mt-24'>No job yet</p>
@@ -456,4 +494,4 @@ const AploadedJobs = () => {
   );
 };
 
-export default AploadedJobs;
+export default Workers;

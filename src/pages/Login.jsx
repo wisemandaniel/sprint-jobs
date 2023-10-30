@@ -52,9 +52,15 @@ function Login() {
         
           if (response.ok) {
             const user = await response.json();
-            console.log('user: ', user);
             localStorage.setItem('user', JSON.stringify(user));
-            navigate("/Dashboard/AllJobs");
+            if (user.roles[0].name === 'ROLE_ADMIN') {
+              navigate("/Dashboard/AllJobs");
+            } else if (user.roles[0].name === 'ROLE_USER') {
+              navigate("/Dashboard/UploadedJobs");
+            } else if (user.roles[0].name === 'ROLE_WORKER') {
+              navigate("/Dashboard/AllJobs");
+            }
+            // navigate("/Dashboard/AllJobs");
           } else {
             const errorData = await response.json();
             console.log('ERROR: ', errorData);

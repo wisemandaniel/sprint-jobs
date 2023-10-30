@@ -78,7 +78,7 @@ const Card = ({ item }) => {
   );
 };
 
-const AploadedJobs = () => {
+const Users = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
 
   const [token, setToken] = useState('')
@@ -456,4 +456,4 @@ const AploadedJobs = () => {
   );
 };
 
-export default AploadedJobs;
+export default Users;

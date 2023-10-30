@@ -68,7 +68,7 @@ const Sidebar = () => {
                     <span className="capitalize ">{'Dashboard'}</span>
                   </NavLink>
               </div>}
-              {role === 'WORKER' || role === 'ADMIN' && <div>
+              {(role === 'ROLE_ADMIN' || role === 'ROLE_WORKER')  && <div>
                   <NavLink
                     to={`/Dashboard/AllJobs`}
                     key={'All Jobs'}
@@ -82,7 +82,7 @@ const Sidebar = () => {
                     <span className="capitalize ">{'All Jobs'}</span>
                   </NavLink>
               </div>}
-              {role === 'ADMIN' || role === 'USER' && <div>
+              {(role === 'ROLE_ADMIN' || role === 'ROLE_USER') && <div>
                   <NavLink
                     to={`/Dashboard/UploadedJobs`}
                     key={'Uploaded Jobs'}
@@ -96,10 +96,10 @@ const Sidebar = () => {
                     <span className="capitalize ">{'Uploaded Jobs'}</span>
                   </NavLink>
               </div>}
-             {role === 'ROLE_ADMIN' || role === 'ROLE_WORKER' && <div>
+             {(role === 'ROLE_ADMIN' || role === 'ROLE_WORKER') && <div>
                   <NavLink
                     to={`/Dashboard/AppliedJobs`}
-                    key={'Applied Jobs'}
+                    // key={'Applied Jobs'}
                     onClick={handleCloseSideBar}
                     style={({ isActive }) => ({
                       backgroundColor: isActive ? currentColor : '',
@@ -108,6 +108,34 @@ const Sidebar = () => {
                   >
                     {<RiContactsLine />}
                     <span className="capitalize ">{'Applied Jobs'}</span>
+                  </NavLink>
+              </div>}
+             {(role === 'ROLE_ADMIN') && <div>
+                  <NavLink
+                    to={`/Dashboard/Workers`}
+                    key={'Workers'}
+                    onClick={handleCloseSideBar}
+                    style={({ isActive }) => ({
+                      backgroundColor: isActive ? currentColor : '',
+                    })}
+                    className={({ isActive }) => (isActive ? activeLink : normalLink)}
+                  >
+                    {<RiContactsLine />}
+                    <span className="capitalize ">{'Workers'}</span>
+                  </NavLink>
+              </div>}
+             {(role === 'ROLE_ADMIN') && <div>
+                  <NavLink
+                    to={`/Dashboard/Users`}
+                    key={'Workers'}
+                    onClick={handleCloseSideBar}
+                    style={({ isActive }) => ({
+                      backgroundColor: isActive ? currentColor : '',
+                    })}
+                    className={({ isActive }) => (isActive ? activeLink : normalLink)}
+                  >
+                    {<RiContactsLine />}
+                    <span className="capitalize ">{'Users'}</span>
                   </NavLink>
               </div>}
           </div>

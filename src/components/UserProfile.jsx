@@ -10,6 +10,8 @@ const UserProfile = () => {
   const { currentColor } = useStateContext();
   const navigate = useNavigate()
 
+  const { setIsClicked, initialState } = useStateContext();
+
   const [user, setUser] = useState({})
   const [role, setRole] = useState('')
 
@@ -45,7 +47,10 @@ const UserProfile = () => {
       </div>
       <div>
         {userProfileData.map((item, index) => (
-          <div key={index} className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  dark:hover:bg-[#42464D]">
+          <div onClick={() => {
+            setIsClicked(initialState)
+            navigate('/dashboard/ProfileScreen')
+          }} key={index} className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  dark:hover:bg-[#42464D]">
             <div>
               <p className="font-semibold dark:text-gray-200 ">{item.title}</p>
               <p className="text-gray-500 text-sm dark:text-gray-400">{item.desc}</p>
@@ -57,6 +62,7 @@ const UserProfile = () => {
         <button
             type="submit"
             onClick={() => {
+              setIsClicked(initialState)
               localStorage.removeItem('user')
               navigate('/Login')
             }}

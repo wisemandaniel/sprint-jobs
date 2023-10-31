@@ -24,7 +24,7 @@ const Card = ({ item }) => {
   return (
     <div>
         <div style={{backgroundColor: '#fff'}}
-                className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-3/6 m-4">
+                className="p-6 mt-5 rounded-lg shadow-lg mx-auto sm:w-3/6 m-4">
             <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
             <p className="mb-4 text-gray-600">{item.description}</p>
             <div className="flex flex-col justify-between items-center sm:flex-row">
@@ -164,7 +164,7 @@ const AploadedJobs = () => {
 
     try {
       setLoading(false)
-      const response = await fetch(`${baseUrl}protected/jobs/created?pageNo=${0}&pageSize=${10}&taken=false`, {
+      const response = await fetch(`${baseUrl}protected/jobs/created`, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + user.accessToken,

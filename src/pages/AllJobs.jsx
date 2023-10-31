@@ -6,11 +6,82 @@ import '../App.css';
 import { useStateContext } from '../contexts/ContextProvider';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { Link } from 'react-router-dom';
+import baseUrl from './url';
+
+const Card = ({ item }) => {
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const openModal = (item) => {
+    setSelectedItem(item);
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+  };
+
+  return (
+    <div>
+        <div style={{backgroundColor: '#fff'}}
+                className="p-6 mt-5 rounded-lg shadow-lg mx-auto sm:w-3/6 m-4">
+            <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
+            <p className="mb-4 text-gray-600">{item.description}</p>
+            <div className="flex flex-col justify-between items-center sm:flex-row">
+              <p className="text-green-400 font-extrabold"></p>
+              {!(item.jobTaken) && <button onClick={() => openModal(item)} className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">Start job</button>}
+
+              {item.jobTaken && <button disabled className="text-red-400 font-extrabold shadow-lg py-2 px-5 bg-red-100 rounded-md sm:mt-7">Taken</button>}
+            </div>
+        </div>
+      
+    
+
+        {selectedItem && (
+        <div className="fixed inset-0 flex items-center justify-center z-40">
+          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
+            <div className="max-h-96 overflow-y-auto">
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Number of days: </p> 
+                 <h2 className="text-2xl font-bold mb-6">{item.numberOfDays}</h2> 
+              </div>
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Number of pages: </p> 
+                 <h2 className="text-2xl font-bold mb-6">{item.numbersOfPages}</h2> 
+              </div>
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Amount: </p> 
+                 <h2 className="text-2xl font-bold mb-6 text-green-400">{item.amount} { item.currency}</h2> 
+              </div>
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Document type: </p> 
+                 <h2 className="text-2xl font-bold mb-6">{item.documentType}</h2> 
+              </div>
+              <div className='flex justify-between'>
+                 <p className="text-xl mb-6">Status: </p> 
+                 {item.jobTaken && <h2 className="text-2xl text-green-400 font-bold mb-6">Started</h2>}  
+                 {!item.jobTaken && <h2 className="text-2xl text-red-400 font-bold mb-6">Not started</h2>} 
+              </div>
+              <div className="flex justify-end mt-8">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
+              >
+                Cancel
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const AllJobs = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
-  const [user, setUser] = useState({})
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
 
   const getUser = () => {
     const userDta = localStorage.getItem('user')
@@ -20,6 +91,7 @@ const AllJobs = () => {
 
   useEffect(() => {
     getUser()
+    getAllJobs()
     const currentThemeColor = localStorage.getItem('colorMode');
     const currentThemeMode = localStorage.getItem('themeMode');
     if (currentThemeColor && currentThemeMode) {
@@ -38,14 +110,37 @@ const AllJobs = () => {
   const closeApply = () => {
     setIsOpenApply(false);
   };
-  
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   const closeModal = () => {
     setIsOpen(false);
   };
+
+  const getAllJobs = async () => {
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
+
+    try {
+      setLoading(false)
+      const response = await fetch(`${baseUrl}protected/jobs?pageNo=${0}&pageSize=${10}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + user.accessToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        setData(responseData.jobResponseDTOList)
+        console.log('JOBS: ', responseData.jobResponseDTOList);
+      } else {
+        // const errorResponse = await response.json();
+        // throw new Error(errorResponse);
+      }
+    } catch (error) {
+      console.log('error: ', error.message);
+    }
+  }
 
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
@@ -92,30 +187,15 @@ const AllJobs = () => {
 
                 <div style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
                   <div></div>
-                  {/* <button onClick={openModal} style={{backgroundColor: currentColor}} className='py-2 px-5 rounded-md text-white'>
-                    Add a job
-                  </button> */}
                 </div>
 
-                <div style={{backgroundColor: '#fff'}}
-                     className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-full m-4">
-                  <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on 01/01/2023</h3>
-                  <p className="mb-4 text-gray-600">I need this document to be typed and send as a pdf file within 2 days...</p>
-                  <div className="flex flex-col justify-between items-center sm:flex-row">
-                    <p className="text-green-400 font-extrabold"></p>
-                    <button onClick={openApply} className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">Apply Now</button>
-                  </div>
-                </div>
+                {data.map((card, index) => (
+                  <Card item={card} />
+                ))}
 
-                <div style={{backgroundColor: '#fff'}}
-                     className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-full m-4">
-                  <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on 01/01/2023</h3>
-                  <p className="mb-4 text-gray-600">I need this document to be typed and send as a pdf file within 2 days...</p>
-                  <div className="flex flex-col justify-between items-center sm:flex-row">
-                    <p className="text-red-400 font-extrabold"></p>
-                    <p className="text-red-400 font-extrabold shadow-lg py-2 px-5 bg-red-100 rounded-md sm:mt-7">Taken</p>
-                  </div>
-                </div>
+                { data.length == 0 &&
+                  <p className='text-white text-center text-2xl mt-24'>No job yet</p>
+                }
                 
             </div>
               

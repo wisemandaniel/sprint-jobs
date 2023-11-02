@@ -7,11 +7,13 @@ import { useStateContext } from '../contexts/ContextProvider';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import baseUrl from './url';
+import SnackMessage from '../components/SnackBar/Snackbar';
 
 
 const ProfileScreen = () => {
     const [balance, setBalance] = useState(500);
   const [amount, setAmount] = useState('');
+  const [showSnack, setShowSnack] = useState(false);
 
   const handleWithdraw = () => {
     if (amount && Number(amount) <= balance) {
@@ -26,6 +28,60 @@ const ProfileScreen = () => {
       setAmount('');
     }
   };
+
+  const [updateValues, setUpdateValues] = useState({
+    phoneNumber: '',
+    username: '',
+  });
+
+  const handleUpdateInputChange = (e) => {
+    const { name, value } = e.target;
+      setUpdateValues((prevFormValues) => ({
+        ...prevFormValues,
+        [name]: value,
+      }));
+  };
+
+  const updateProfile = async () => {
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
+    setLoading(true)
+
+    const data = {
+      "phoneNumber": '237' + updateValues.phoneNumber,
+      "username": updateValues.username
+    }
+
+    try {
+      setLoading(false)
+      const response = await fetch(`${baseUrl}protected/user/profile`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': 'Bearer ' + user.accessToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        getUserProfile()
+        setIsOpen(false)
+        setShowSnack(true)
+
+        // Set a timeout to reset showSnack to false after 3 seconds
+        setTimeout(() => {
+          setShowSnack(false);
+        }, 3000);
+      } else {
+        // const errorResponse = await response.json();
+        // throw new Error(errorResponse);
+      }
+    } catch (error) {
+      setError(true)
+      setLoading(false)
+      console.log('error: ', error.message);
+    }
+  }
 
 
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -93,6 +149,13 @@ const ProfileScreen = () => {
       }));
   };
 
+
+  const transactions = [
+    { id: 1, recipient: 'John Doe', amount: 500.0, date: 'October 15, 2023', status: 'successful' },
+    { id: 2, recipient: 'Jane Smith', amount: 300.0, date: 'October 16, 2023', status: 'pending' },
+    { id: 3, recipient: 'Alice Johnson', amount: 750.0, date: 'October 17, 2023', status: 'failed' },
+  ];
+
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
         <div className="flex relative dark:bg-main-dark-bg">
@@ -154,28 +217,36 @@ const ProfileScreen = () => {
                             </div>
 
                             
-                            <div className='mt-8'>
+                            {/* <div className='mt-8'>
                                 <p className="text-gray-500">Role</p>
                                 {userdta.roleDTOList[0].name === 'ROLE_USER' && <h3 className="text-gray-500 font-bold">USER</h3>}
                                 {userdta.roleDTOList[0].name === 'ROLE_WORKER' && <h3 className="text-gray-500 font-bold">WORKER</h3>}
                                 {userdta.roleDTOList[0].name === 'ROLE_ADMIN' && <h3 className="text-gray-500 font-bold">ADMINISTRATOR</h3>}
+                            </div> */}
+                            <div className='mt-8'>
+                                <p className="text-gray-500">Momo number</p>
+                                <h3 className="text-gray-500 font-bold">{userdta.phoneNumber}</h3>
                             </div>
                             
                             <div className='mt-8'>
                                 <p className="text-gray-500">Email</p>
                                 <h3 className="text-gray-500 font-bold">{userdta.email}</h3>
                             </div>
+
+                            <div className='mt-8'>
+                                <button onClick={openModal} className='ml-auto mr-auto bg-green-600 px-4 py-1 rounded text-white font-bold'>
+                                Edit Profile
+                                </button>
+                            </div>
                         </div>
 
                         <div className='mt-8'>
-                            <p className="text-gray-500 sm:text-center">Wallet</p>
-                            <h3 className="text-2xl font-bold mt-2 text-green-400 mb-4">70000 XAF</h3>
-                            <button onClick={openModalWallet} className='ml-auto mr-auto bg-green-600 px-4 py-1 rounded text-white font-bold'>view wallet</button>
+                            {/* <p className="text-gray-500 sm:text-center">Wallet</p> */}
+                            {/* <h3 className="text-2xl font-bold mt-2 text-green-400 mb-4">70000 XAF</h3>
+                            <button onClick={openModalWallet} className='ml-auto mr-auto bg-green-600 px-4 py-1 rounded text-white font-bold'>view wallet</button> */}
 
-                            <div className='mt-12'>
-                                <button onClick={openModal} className="text-white font-semibold px-4 py-2 rounded bg-blue-700 hover:bg-blue-800">
-                                Edit Profile
-                                </button>
+                            <div className='mt-8'>
+                              <button onClick={openModalWallet} className='ml-auto mr-auto bg-green-600 px-4 py-1 rounded text-white font-bold'>All transactions</button>
                             </div>
                         </div>
                         
@@ -192,16 +263,16 @@ const ProfileScreen = () => {
           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 overflow-y-auto scrollbar-hide relative z-10">
             <div className="max-h-96 overflow-y-auto">
-              <h2 className="text-2xl font-bold mb-6">Add a Worker</h2>
+              <h2 className="text-2xl font-bold mb-6">Update profile</h2>
               <form>
               <div className="mb-4">
                 <label htmlFor="lastName" className="block mb-2 font-bold">
                   Username
                 </label>
                 <input
-                  value={formValues.username}
+                  value={updateValues.username}
                   name="username"
-                  onChange={handleInputChange}
+                  onChange={handleUpdateInputChange}
                   placeholder="Enter User's username"
                   type="text" 
                   min="0"
@@ -214,15 +285,18 @@ const ProfileScreen = () => {
                     User phone
                   </label>
                   <div className="relative flex items-center">
-                    <input
-                      value={formValues.phone}
-                      name="phone"
-                      onChange={handleInputChange}
-                      placeholder="Enter user's phone number"
-                      type="phone"
-                      className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
-                    />
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-gray-600">
+                    +237
                   </div>
+                  <input
+                    value={updateValues.phoneNumber}
+                    name="phoneNumber"
+                    onChange={handleUpdateInputChange}
+                    placeholder="Enter user's phone number"
+                    type="tel"
+                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pl-12"
+                  />
+                </div>
                 </div>
             </form>
             </div>
@@ -235,10 +309,11 @@ const ProfileScreen = () => {
                 Cancel
               </button>
               <button
+                onClick={updateProfile}
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
               >
-                Upload
+                Update
               </button>
             </div>
           </div>
@@ -249,46 +324,38 @@ const ProfileScreen = () => {
         <div className="fixed inset-0 flex items-center justify-center z-40">
           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 overflow-y-auto scrollbar-hide relative z-10">
-            
-            <h1 className="text-3xl font-bold mb-8 text-center">Wallet</h1>
-            <div className="bg-white shadow-md rounded-md p-6 w-full max-w-lg">
-                <div className="flex items-center mb-4">
-                <span className="text-gray-600 text-lg mr-2">Balance:</span>
-                <span className="text-blue-600 text-2xl font-bold">{balance} FCFA</span>
+          <div className='flex flex-row justify-between'>
+            <h2 className="text-2xl font-bold mb-2 text-center">All transactions</h2>
+            <button onClick={() => setIsOpenWallet(false)} className="text-2xl mb-2 text-center">X</button>
+          </div>
+          <div className="overflow-y-auto h-3/4 max-h-96">
+            <div className="container mx-auto py-8">
+              {transactions.map((transaction) => (
+                <div key={transaction.id} className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden mb-4">
+                  <div className="px-6 py-4">
+                    <div className="mb-4 flex flex-row justify-between">
+                      <label className="block text-gray-600 text-sm font-semibold mb-2">Amount</label>
+                      <p className="text-green-500 font-medium">{transaction.amount.toFixed(2)} FCFA</p>
+                    </div>
+                    <div className="mb-4 flex flex-row justify-between">
+                      <label className="block text-gray-600 text-sm font-semibold mb-2">Date</label>
+                      <p className="text-gray-800 font-medium">{transaction.date}</p>
+                    </div>
+                    <div className="mb-4 flex flex-row justify-between">
+                      <label className="block text-gray-600 text-sm font-semibold mb-2">Status</label>
+                      <p className={transaction.status === 'successful' ? 'text-green-500' : transaction.status === 'pending' ? 'text-yellow-500' : 'text-red-500'}>{transaction.status}</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                <input
-                    type="number"
-                    className="flex-1 appearance-none rounded-md border border-gray-300 py-2 px-3 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                    placeholder="Enter amount"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                />
-                <button
-                    className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-8"
-                    onClick={handleWithdraw}
-                >
-                    Withdraw
-                </button>
-                <button
-                    className="bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 mt-8"
-                    onClick={handleFund}
-                >
-                    Fund
-                </button>
-                </div>
+              ))}
             </div>
-
-              <button
-                type="button"
-                onClick={() => setIsOpenWallet(false)}
-                className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow mt-8"
-              >
-                Cancel
-              </button>
           </div>
         </div>
+    
+        </div>
         )}
+
+        {showSnack && <SnackMessage message="Profile updated successfully" />}
     </div>
   );
 };

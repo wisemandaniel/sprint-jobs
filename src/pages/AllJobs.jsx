@@ -10,6 +10,8 @@ import baseUrl from './url';
 
 const Card = ({ item }) => {
   const [selectedItem, setSelectedItem] = useState(null);
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false);
 
   const openModal = (item) => {
     setSelectedItem(item);
@@ -18,6 +20,40 @@ const Card = ({ item }) => {
   const closeModal = () => {
     setSelectedItem(null);
   };
+
+  const startJob = async (jobId) => {
+
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
+
+    setLoading(true)
+
+    const data = {
+      "jobId": jobId,
+    }
+
+    try {
+      setLoading(false)
+      const response = await fetch(`${baseUrl}protected/jobs/start?jobId=${jobId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + user.accessToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        alert('Successfully started this job')
+      } else {
+        
+      }
+    } catch (error) {
+      setError(true)
+      setLoading(false)
+      console.log('error: ', error.message);
+    }
+  }
 
   return (
     <div>
@@ -61,14 +97,21 @@ const Card = ({ item }) => {
                  {item.jobTaken && <h2 className="text-2xl text-green-400 font-bold mb-6">Started</h2>}  
                  {!item.jobTaken && <h2 className="text-2xl text-red-400 font-bold mb-6">Not started</h2>} 
               </div>
-              <div className="flex justify-end mt-8">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
-              >
-                Cancel
-              </button>
+              <div className="flex justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startJob(item.id)}
+                  className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
+                >
+                  start job
+                </button>
             </div>
             </div>
           </div>

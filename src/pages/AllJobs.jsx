@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-
-import { Navbar, Footer, Sidebar, ThemeSettings } from '../components';
+import { Navbar, Sidebar, ThemeSettings } from '../components';
 import '../App.css';
-
 import { useStateContext } from '../contexts/ContextProvider';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import baseUrl from './url';
+import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const Card = ({ item }) => {
   const [selectedItem, setSelectedItem] = useState(null);
@@ -59,13 +59,13 @@ const Card = ({ item }) => {
     <div>
         <div style={{backgroundColor: '#fff'}}
                 className="p-6 mt-5 rounded-lg shadow-lg mx-auto sm:w-3/6 m-4">
-            <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
+            <h3 className="text-xl font-semibold mb-2 text-gray-400">{t('uploaded_on')} {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
             <p className="mb-4 text-gray-600">{item.description}</p>
             <div className="flex flex-col justify-between items-center sm:flex-row">
               <p className="text-green-400 font-extrabold"></p>
               {!(item.jobTaken) && <button onClick={() => openModal(item)} className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">Start job</button>}
 
-              {item.jobTaken && <button disabled className="text-red-400 font-extrabold shadow-lg py-2 px-5 bg-red-100 rounded-md sm:mt-7">Taken</button>}
+              {item.jobTaken && <button disabled className="text-red-400 font-extrabold shadow-lg py-2 px-5 bg-red-100 rounded-md sm:mt-7">{t('taken')}</button>}
             </div>
         </div>
       
@@ -122,6 +122,8 @@ const Card = ({ item }) => {
 };
 
 const AllJobs = () => {
+  const { t } = useTranslation();
+
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
@@ -237,7 +239,7 @@ const AllJobs = () => {
                 ))}
 
                 { data.length == 0 &&
-                  <p className='text-white text-center text-2xl mt-24'>No job yet</p>
+                  <p className='text-white text-center text-2xl mt-24'>{t('No_job_yet')}</p>
                 }
                 
             </div>
@@ -249,7 +251,7 @@ const AllJobs = () => {
                 <form>
                 <div className="mb-4">
                   <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
-                    Name
+                    {t('Name')}
                   </label>
                   <input
                     type="text"

@@ -9,6 +9,7 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import baseUrl from './url';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import Modal from '../components/Modal/Modal';
+import { t } from 'i18next';
 
 const Card = ({ item }) => {
   const [selectedItem, setSelectedItem] = useState(null);
@@ -319,7 +320,7 @@ const AppliedJobs = () => {
                 ))}
 
                 { data.length == 0 &&
-                  <p className='text-white text-center text-2xl mt-24'>No job yet</p>
+                  <p className='text-white text-center text-2xl mt-24'>{t('No_job_yet')}</p>
                 }
 
             </div>

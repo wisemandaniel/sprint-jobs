@@ -11,23 +11,7 @@ import SnackMessage from '../components/SnackBar/Snackbar';
 
 
 const ProfileScreen = () => {
-    const [balance, setBalance] = useState(500);
-  const [amount, setAmount] = useState('');
   const [showSnack, setShowSnack] = useState(false);
-
-  const handleWithdraw = () => {
-    if (amount && Number(amount) <= balance) {
-      setBalance(balance - Number(amount));
-      setAmount('');
-    }
-  };
-
-  const handleFund = () => {
-    if (amount) {
-      setBalance(balance + Number(amount));
-      setAmount('');
-    }
-  };
 
   const [updateValues, setUpdateValues] = useState({
     phoneNumber: '',
@@ -89,6 +73,8 @@ const ProfileScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenWallet, setIsOpenWallet] = useState(false);
   
+  const [languageModal, setLanguageModal] = useState(false);
+  
   const openModal = () => {
     setIsOpen(true);
   };
@@ -98,6 +84,7 @@ const ProfileScreen = () => {
   };
 
   useEffect(() => {
+    getAllUserTransactions()
     getUserProfile()
     const currentThemeColor = localStorage.getItem('colorMode');
     const currentThemeMode = localStorage.getItem('themeMode');
@@ -141,21 +128,59 @@ const ProfileScreen = () => {
     username: '',
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-      setFormValues((prevFormValues) => ({
-        ...prevFormValues,
-        [name]: value,
-      }));
+  const changeLanguage = () => {
+    setLanguageModal(true)
   };
 
+  const getAllUserTransactions = async () => {
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
 
-  const transactions = [
-    { id: 1, recipient: 'John Doe', amount: 500.0, date: 'October 15, 2023', status: 'successful' },
-    { id: 2, recipient: 'Jane Smith', amount: 300.0, date: 'October 16, 2023', status: 'pending' },
-    { id: 3, recipient: 'Alice Johnson', amount: 750.0, date: 'October 17, 2023', status: 'failed' },
-  ];
+    try {
+      // setLoading(false)
+      const response = await fetch(`${baseUrl}protected/payments/user`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + user.accessToken,
+          'Content-Type': 'application/json'
+        }
+      });
 
+      if (response.ok) {
+        const responseData = await response.json();
+        setTransactions(responseData.paymentResponseDTOList)
+      } else {
+        
+      }
+    } catch (error) {
+      console.log('error: ', error.message);
+    }
+  }
+
+  const [transactions, setTransactions] = useState([])
+
+  const [selectedOption, setSelectedOption] = useState('');
+  const [isOpen2, setIsOpen2] = useState(false);
+  const options = [
+    {
+      code: 'en',
+      language: 'English'
+    },
+    {
+      code: 'fr',
+      language: 'French'
+    }
+  ]
+
+  const toggleDropdown = () => {
+    setIsOpen2(!isOpen2);
+  };
+
+  const selectOption = (option) => {
+    setSelectedOption(option);
+    setIsOpen2(false);
+  };
+  
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
         <div className="flex relative dark:bg-main-dark-bg">
@@ -241,15 +266,58 @@ const ProfileScreen = () => {
                         </div>
 
                         <div className='mt-8'>
-                            {/* <p className="text-gray-500 sm:text-center">Wallet</p> */}
-                            {/* <h3 className="text-2xl font-bold mt-2 text-green-400 mb-4">70000 XAF</h3>
-                            <button onClick={openModalWallet} className='ml-auto mr-auto bg-green-600 px-4 py-1 rounded text-white font-bold'>view wallet</button> */}
-
                             <div className='mt-8'>
                               <button onClick={openModalWallet} className='ml-auto mr-auto bg-green-600 px-4 py-1 rounded text-white font-bold'>All transactions</button>
                             </div>
+                            <div className='mt-8'>
+                            <button
+                                type="button"
+                                className="w-full bg-green-600 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm py-2 px-4 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                onClick={toggleDropdown}
+                              >
+                              <span className='text-white font-bold'>{selectedOption || 'Select an option'}</span>
+                              <svg
+                                className={`w-5 h-5 ml-2 transition-transform duration-200 ${
+                                  isOpen ? 'transform rotate-180' : ''
+                                }`}
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M6.293 6.707a1 1 0 011.414 0L10 9.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                             </button>
+                            </div>
                         </div>
-                        
+                        {isOpen2 && (
+                          <div className="fixed inset-0 flex items-center justify-center z-40">
+                          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
+                          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 overflow-y-auto scrollbar-hide relative z-10 h-2/6">
+                          <div>
+                            <h2 className="text-2xl font-bold mb-2 text-center">Select language</h2>
+                          </div>
+                            <div className="container mx-auto py-8">
+                                <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden mb-4 flex justify-center">
+                                  <ul className="absolute z-10 bg-white border border-gray-300 dark:border-gray-700 rounded-md mt-1 shadow-sm  w-5/6">
+                                            {options.map((option) => (
+                                              <li
+                                                key={option.code}
+                                                className="py-2 px-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900
+                                                hover:text-white"
+                                                onClick={() => selectOption(option.language)}
+                                              >
+                                                {option.language}
+                                              </li>
+                                            ))}
+                                          </ul>
+                                  </div>
+                            </div>
+                          </div>
+                        </div>
+                        )}
                         </div>
                     </div>
                     </div>
@@ -339,11 +407,17 @@ const ProfileScreen = () => {
                     </div>
                     <div className="mb-4 flex flex-row justify-between">
                       <label className="block text-gray-600 text-sm font-semibold mb-2">Date</label>
-                      <p className="text-gray-800 font-medium">{transaction.date}</p>
+                      <p className="text-gray-800 font-medium">
+                          {new Date(transaction.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })}  
+                      </p>
                     </div>
                     <div className="mb-4 flex flex-row justify-between">
                       <label className="block text-gray-600 text-sm font-semibold mb-2">Status</label>
-                      <p className={transaction.status === 'successful' ? 'text-green-500' : transaction.status === 'pending' ? 'text-yellow-500' : 'text-red-500'}>{transaction.status}</p>
+                      <p className={transaction.transactionStatus === 'successful' ? 'text-green-500' : transaction.transactionStatus === 'PENDING' ? 'text-yellow-500' : 'text-red-500'}>{transaction.transactionStatus}</p>
                     </div>
                   </div>
                 </div>

@@ -222,7 +222,7 @@ const Users = () => {
                                         className="bg-red-400 hover:bg-red-700 text-white font-bold py-1 px-3 rounded mr-2"
                                         onClick={() => handleDelete(item.id)}>Delete</button>
                                     <button
-                                        className="bg-blue-400 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" onClick={() => handleUpdate(item.id)}>Update</button>
+                                        className="bg-blue-400 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded" onClick={() => handleUpdate(item.id)}>Suspend</button>
                                 </td>
                             </tr>
                         ))}

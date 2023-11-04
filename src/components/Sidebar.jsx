@@ -3,14 +3,12 @@ import { Link, NavLink } from 'react-router-dom';
 import { SiShopware } from 'react-icons/si';
 import { MdOutlineCancel } from 'react-icons/md';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { BsCurrencyDollar, BsShield } from 'react-icons/bs';
-import { IoMdContacts } from 'react-icons/io';
+import { useTranslation } from 'react-i18next';
 import { RiContactsLine } from 'react-icons/ri';
-
-import { links } from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
 
 const Sidebar = () => {
+  const { t } = useTranslation();
 
   const [role, setRole] = useState('')
 
@@ -65,7 +63,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? dashboardColor : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{'Dashboard'}</span>
+                    <span className="capitalize ">{t('Dashboard')}</span>
                   </NavLink>
               </div>}
               {(role === 'ROLE_ADMIN' || role === 'ROLE_WORKER')  && <div>
@@ -79,7 +77,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{'All Jobs'}</span>
+                    <span className="capitalize ">{t('All_Jobs')}</span>
                   </NavLink>
               </div>}
               {(role === 'ROLE_ADMIN' || role === 'ROLE_USER') && <div>
@@ -93,7 +91,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{'Uploaded Jobs'}</span>
+                    <span className="capitalize ">{t('Uploaded_Jobs')}</span>
                   </NavLink>
               </div>}
              {(role === 'ROLE_ADMIN' || role === 'ROLE_WORKER') && <div>
@@ -107,7 +105,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{'Applied Jobs'}</span>
+                    <span className="capitalize ">{t('Applied_Jobs')}</span>
                   </NavLink>
               </div>}
              {(role === 'ROLE_ADMIN') && <div>
@@ -121,7 +119,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{'Workers'}</span>
+                    <span className="capitalize ">{t('Workers')}</span>
                   </NavLink>
               </div>}
              {(role === 'ROLE_ADMIN') && <div>
@@ -135,7 +133,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{'Users'}</span>
+                    <span className="capitalize ">{t('Users')}</span>
                   </NavLink>
               </div>}
           </div>

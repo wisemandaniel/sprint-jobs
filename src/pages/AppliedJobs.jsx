@@ -10,16 +10,15 @@ import baseUrl from './url';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import Modal from '../components/Modal/Modal';
 import { t } from 'i18next';
+import { useNavigate } from 'react-router-dom';
 
 const Card = ({ item }) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
+  const navigate = useNavigate()
+
   const openModal = (item) => {
     setSelectedItem(item);
-  };
-
-  const closeModal = () => {
-    setSelectedItem(null);
   };
 
   return (
@@ -30,13 +29,10 @@ const Card = ({ item }) => {
             <p className="mb-4 text-gray-600">{item.description}</p>
             <div className="flex flex-col justify-between items-center sm:flex-row">
               <p className="text-green-400 font-extrabold"></p>
-              <button onClick={() => openModal(item)} className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
+              <button onClick={() => navigate(`/dashboard/AppliedJob/${item.id}`)} className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
             </div>
         </div>
-      
-    
-
-        {selectedItem && (
+        {/* {selectedItem && (
         <div className="fixed inset-0 flex items-center justify-center z-40">
           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
@@ -74,7 +70,7 @@ const Card = ({ item }) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
@@ -259,12 +255,6 @@ const AppliedJobs = () => {
     }
   }
 
-  const cardsData = [
-    { title: 'Card 1', description: 'Description for Card 1' },
-    { title: 'Card 2', description: 'Description for Card 2' },
-    { title: 'Card 3', description: 'Description for Card 3' }
-  ];
-
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
         <div className="flex relative dark:bg-main-dark-bg">
@@ -308,13 +298,6 @@ const AppliedJobs = () => {
             </div>
             <div className="w-4/5 m-auto mt-20">
 
-                <div style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
-                  <div></div>
-                  <button onClick={openModal} style={{backgroundColor: currentColor}} className='py-2 px-5 rounded-md text-white'>
-                    Add a job
-                  </button>
-                </div>
-
                 {data.map((card, index) => (
                   <Card item={card} />
                 ))}
@@ -329,127 +312,7 @@ const AppliedJobs = () => {
             {loading && <div>
                 <LoadingSpinner />
             </div>}
-            {showModal && <Modal>
-              <div className="bg-white md:w-5/12 w-10/12 max-w-screen-md rounded-lg m-4 flex flex-col relative shadow-2xl p-4 items-center justify-center z-50">
-                {!error && <p className=' text-center text-xl text-green-400'>{errorMessage}</p>}
-                {error && <p className=' text-center text-xl text-red-400'>{errorMessage}</p>}
-                <button onClick={() => setShowModal(false)} className='mt-6 bg-green-500 w-2/6 text-white text-center rounded-md'>close</button>
-              </div>
-            </Modal>}
-
-      {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-40">
-          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 overflow-y-auto scrollbar-hide relative z-10">
-            <div className="max-h-96 overflow-y-auto">
-              <h2 className="text-2xl font-bold mb-6">Add Job</h2>
-              <form>
-              <div className="mb-4">
-                <label htmlFor="firstName" className="block mb-2 font-bold">
-                  Number of pages
-                </label>
-                <input
-                  onChange={handleInputChange}
-                  name="numberOfPages"
-                  placeholder='Enter total number of estimated pages'
-                  type="number"
-                  min="0"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="lastName" className="block mb-2 font-bold">
-                  Estimated Duration
-                </label>
-                <input
-                  name="estimatedDuration"
-                  onChange={handleInputChange}
-                  placeholder='Enter total number of estimated days'
-                  type="number" 
-                  min="0"
-                  onKeyDown="return event.keyCode !== 189"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div className="mb-4 relative">
-                  <label htmlFor="price" className="block mb-2 font-bold">
-                    Estimated Price
-                  </label>
-                  <div className="relative flex items-center">
-                    <input
-                      value={formValues.estimatedPrice}
-                      disabled
-                      name="estimatedPrice"
-                      onChange={handleInputChange}
-                      placeholder='Calculated from total number of pages'
-                      type="text"
-                      className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
-                    />
-                    <span className="absolute right-3 text-gray-500">XAF</span>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="documentType" className="block mb-2 font-bold">
-                    Document Type
-                  </label>
-                  <select
-                    name="documentType"
-                    onChange={handleInputChange}
-                    id="documentType"
-                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="PDF">PDF</option>
-                    <option value="EXCEL">EXCEL</option>
-                    <option value="POWERPOINT">POWERPOINT</option>
-                  </select>
-                </div>
-              <div className="mb-4">
-                <label htmlFor="address" className="block mb-2 font-bold">
-                  Description
-                </label>
-                <input
-                  name="description"
-                  onChange={handleInputChange}
-                  type="text"
-                  placeholder='Enter brief description of what you want'
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="country" className="block mb-2 font-bold">
-                  Images
-                </label>
-                <input
-                  name="images"
-                  type="file"
-                  id="images"
-                  multiple
-                  accept="image/*"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  onChange={handleImageChange}
-                />
-              </div>
-            </form>
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                onClick={postJob}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
-              >
-                Upload
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+            
     </>
     </div>
   </div>

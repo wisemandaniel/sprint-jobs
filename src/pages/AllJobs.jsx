@@ -7,11 +7,14 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import baseUrl from './url';
 import { useTranslation } from 'react-i18next';
 import { t } from 'i18next';
+import { useNavigate } from 'react-router-dom';
+import { setImage } from '@syncfusion/ej2/spreadsheet';
 
 const Card = ({ item }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false);
+  const navigate = useNavigate()
 
   const openModal = (item) => {
     setSelectedItem(item);
@@ -63,13 +66,16 @@ const Card = ({ item }) => {
             <p className="mb-4 text-gray-600">{item.description}</p>
             <div className="flex flex-col justify-between items-center sm:flex-row">
               <p className="text-green-400 font-extrabold"></p>
-              {!(item.jobTaken) && <button onClick={() => openModal(item)} className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">Start job</button>}
+              {!(item.jobTaken) && <button onClick={() => 
+              {
+                  navigate(`/dashboard/AllJob/${item.id}`) 
+              }
+            } className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">Start job</button>}
 
               {item.jobTaken && <button disabled className="text-red-400 font-extrabold shadow-lg py-2 px-5 bg-red-100 rounded-md sm:mt-7">{t('taken')}</button>}
             </div>
         </div>
       
-    
 
         {selectedItem && (
         <div className="fixed inset-0 flex items-center justify-center z-40">

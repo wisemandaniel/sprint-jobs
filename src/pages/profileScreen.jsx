@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Navbar, Footer, Sidebar, ThemeSettings } from '../components';
+import { Navbar, Sidebar, ThemeSettings } from '../components';
 import '../App.css';
 
 import { useStateContext } from '../contexts/ContextProvider';
@@ -408,21 +408,34 @@ const ProfileScreen = () => {
                     <div className="mb-4 flex flex-row justify-between">
                       <label className="block text-gray-600 text-sm font-semibold mb-2">Date</label>
                       <p className="text-gray-800 font-medium">
-                          {new Date(transaction.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          })}  
+                        {new Date(transaction.createdAt).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <div className="mb-4 flex flex-row justify-between">
+                      <label className="block text-gray-600 text-sm font-semibold mb-2">Time</label>
+                      <p className="text-gray-800 font-medium">
+                        {new Date(transaction.createdAt).toLocaleString('en-US', {
+                          hour: 'numeric',
+                          minute: 'numeric',
+                          second: 'numeric',
+                        })}
                       </p>
                     </div>
                     <div className="mb-4 flex flex-row justify-between">
                       <label className="block text-gray-600 text-sm font-semibold mb-2">Status</label>
-                      <p className={transaction.transactionStatus === 'successful' ? 'text-green-500' : transaction.transactionStatus === 'PENDING' ? 'text-yellow-500' : 'text-red-500'}>{transaction.transactionStatus}</p>
+                      <p className={transaction.transactionStatus === 'SUCCESSFUL' ? 'text-green-500' : transaction.transactionStatus === 'PENDING' ? 'text-yellow-500' : 'text-red-500'}>{transaction.transactionStatus}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+            {transactions.length === 0 && <div>
+              <h3 className='text-center'>No transactions yet</h3>
+            </div>}
           </div>
         </div>
     

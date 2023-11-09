@@ -8,6 +8,7 @@ import baseUrl from './url';
 import { t } from 'i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import cameroon from '../data/cameroon.png'
+import ErrorSnackMessage from '../components/ErrorSnackbar/ErrorSnackbar';
 
 const JobDetail = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -15,16 +16,22 @@ const JobDetail = () => {
   const { jobId } = useParams();
   const [job, setJob] = useState({})
   const [transactions, setTransactions] = useState([])
+  const [paidAmt, setPaidAmt] = useState('')
   const [isMakePayment, setIsMakePayment] = useState(false)
   const [showText, setShowText] = useState(false)
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const [timer, setTimer] = useState('')
+  const [showSnack, setShowSnack] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [progress, setProgress] = useState('');
+  const [fileUrl, setFileUrl] = useState('')
 
   const navigate = useNavigate()
 
   useEffect(() => {
     getJobById()
+    getJobStatus()
     getJobTransactions()
     const userData = localStorage.getItem('user')
     const user = JSON.parse(userData)
@@ -82,6 +89,13 @@ const JobDetail = () => {
         setTransactions(sortedTransactions)
         console.log('sortedTransactions: ', sortedTransactions);
         console.log('responseData: ', transactions);
+        
+
+        if (sortedTransactions.length > 0) {
+          const totalAmount = sortedTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+          console.log(totalAmount);
+          setPaidAmt(totalAmount)
+        }
       } else {
         
       }
@@ -106,16 +120,15 @@ const JobDetail = () => {
 
   function countdown(seconds) {
     if (seconds >= 0) {
-      console.log(seconds);
       setTimer(seconds)
       setTimeout(() => {
         countdown(seconds - 1);
       }, 1000); // Call the function again after 1000 milliseconds (1 second)
     } else {
+      getJobTransactions()
       setShowText(true)
       setLoading(false)
       setDone(true)
-      console.log('Countdown has reached 0');
     }
   }
 
@@ -131,30 +144,131 @@ const JobDetail = () => {
       "description": formValues.describe
     }
 
+    if (transactions.length === 0 && formValues.amount < job.amount / 2) {
+      setErrorMessage(`Amount must be greater than or equal to ${job.amount / 2} FCFA`)
+      setLoading(false)
+      setShowSnack(true)
+    
+      setTimeout(() => {
+        setShowSnack(false);
+      }, 3000);
+
+    } else if (formValues.phoneNumber.length < 9) {
+      setErrorMessage(`Phone number must be 9 digits`)
+      setLoading(false)
+      setShowSnack(true)
+    
+      setTimeout(() => {
+        setShowSnack(false);
+      }, 3000);
+      
+    } else {
+      try {
+        const response = await fetch(`${baseUrl}protected/payments?jobId=${jobId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + user.accessToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+  
+        if (response.ok) {
+          const res = await response.json()
+          console.log('response: ', res);
+          setShowText(true)
+          setDone(true)
+          countdown(60)
+        } else {
+          setShowText(false)
+          setLoading(false)
+        }
+      } catch (error) {
+        setShowText(false)
+        setLoading(false)
+        console.log('error: ', error.message);
+      }
+    }
+    
+  }
+
+  const getJobStatus = async () => {
+    setLoading(true)
+    const url = baseUrl + `protected/jobs/status?jobId=${jobId}`
+
+    const userData = localStorage.getItem('user')
+    const user = JSON.parse(userData)
+
     try {
-      const response = await fetch(`${baseUrl}protected/payments?jobId=${jobId}`, {
-        method: 'POST',
+      const response = await fetch(url, {
+        method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + user.accessToken,
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        }
       });
 
       if (response.ok) {
-        const res = await response.json()
-        console.log('response: ', res);
-        setShowText(true)
-        setDone(true)
-        countdown(50)
+        setLoading(false)
+        const responseData = await response.json();
+        console.log('JOB STATUS: ', responseData);
+
+        if (responseData.jobStatus === 'STARTED') {
+            setProgress('STARTED')
+        } else if (responseData.jobStatus === 'IN_PROGRESS') {
+            setProgress('IN PROGRESS')
+        } else if (responseData.jobStatus === 'COMPLETED') {
+            setProgress('COMPLETED')
+        }
       } else {
-        setShowText(false)
         setLoading(false)
       }
     } catch (error) {
-      setShowText(false)
-      setLoading(false)
       console.log('error: ', error.message);
+    }
+  }
+
+  const downloadFile = async () => {
+    if (transactions.length > 0) {
+      const totalAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+      console.log(totalAmount);
+      setPaidAmt(totalAmount)
+      
+      if (totalAmount === job.amount) {
+         const url = `${baseUrl}protected/jobs/completed/files?jobId=${jobId}`
+         
+        const userData = localStorage.getItem('user')
+        const user = JSON.parse(userData)
+
+        try {
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + user.accessToken,
+              'Content-Type': 'application/json'
+            }
+          });
+    
+          if (response.ok) {
+            setLoading(false)
+            const responseData = await response.json();
+            console.log('JOB FILE: ', responseData);
+            setFileUrl(responseData[0].url)
+          } else {
+            setLoading(false)
+          }
+        } catch (error) {
+          console.log('error: ', error.message);
+        }
+
+      } else {
+        setErrorMessage("Please complete payment to download file")
+        setShowSnack(true)
+
+        setTimeout(() => {
+          setShowSnack(false)
+        }, 3000);
+      }
     }
   }
 
@@ -220,35 +334,54 @@ const JobDetail = () => {
                     day: 'numeric',
                     })}</p>
                     </div>
+                    <div className="bg-gray-200 p-4 rounded-lg mt-4 flex flex-row justify-between">
+                    <p className="text-gray-600">Job Status</p>
+                    {progress === 'STARTED' && <p className="text-lg font-semibold text-green-400">{progress} </p>}
+                    {progress === 'IN PROGRESS' && <p className="text-lg font-semibold text-green-500">{progress} </p>}
+                    {progress === 'COMPLETED' && <p className="text-lg font-bold text-green-600">{progress} </p>}
+                    {(progress !== 'STARTED' && progress !== 'IN PROGRESS' && progress !== 'COMPLETED') && (
+                      <p className="text-lg font-bold text-red-400">NOT STARTED</p>
+                    )}
+
+                    </div>
                 </div>
                 <div className="lg:w-1/2 mt-6 lg:mt-0 lg:ml-6">
                     <div className="bg-gray-200 p-4 rounded-lg mb-4 flex flex-row justify-between">
                         <p className="text-gray-600">Total amount to be paid</p>
-                        <p className="font-semibold">{job.amount} XAF</p>
+                        <p className="font-semibold text-green-600">{job.amount} XAF</p>
                     </div>
                     {transactions.map((transaction) => (
                         <div key={transaction.id} className="bg-gray-200 p-4 rounded-lg flex flex-row justify-between mb-4">
                         <p className="text-gray-600">{transaction.description}</p>
-                        <p className="font-semibold">{`${transaction.amount} XAF`}</p>
+                        <p className="font-semibold text-green-600">{`${transaction.amount} XAF`}</p>
                         </div>
                     ))}
                     {transactions.length === 0 &&
                     <>
                         <div className="bg-gray-200 p-4 rounded-lg flex flex-row justify-between">
                             <p className="text-gray-600">First payment amount</p>
-                            <p className="font-semibold">Not paid</p>
+                            <p className="font-semibold text-red-300">Not paid</p>
                         </div>
                         <div className="bg-gray-200 p-4 rounded-lg flex flex-row justify-between mt-4">
                             <p className="text-gray-600">Second payment amount</p>
-                            <p className="font-semibold">Not paid</p>
+                            <p className="font-semibold text-red-300">Not paid</p>
                         </div>
                     </>
                     }
                 </div>
             </div>
-                <button onClick={() => setIsMakePayment(true)} className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded ml-auto mr-auto w-4/6">
-                    Make payment
+              {(parseInt(paidAmt) < parseInt(job.amount)) && (
+                <button
+                  onClick={() => setIsMakePayment(true)}
+                  className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded ml-auto mr-auto w-4/6"
+                >
+                  Make payment
                 </button>
+              )}
+
+                {progress === 'COMPLETED' && <button onClick={downloadFile} className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded ml-auto mr-auto w-4/6">
+                    Download file
+                </button>}
             </div>
         </div>
     </div>
@@ -274,13 +407,13 @@ const JobDetail = () => {
                 </label>
                 <div className="relative flex items-center border rounded">
                     <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none bg-gray-200">
-                        <p className='ml-2 mr-2'>Description</p>
+                        <p className='ml-2 mr-2'>Type</p>
                     </div>
                     <select
                         value={formValues.describe}
                         name="describe"
                         onChange={handleInputChange}
-                        className="w-full px-4 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pl-12 ml-16 text-xl"
+                        className="w-full px-4 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pl-12 ml-6 text-xl"
                     >
                         <option value="First payment">First payment</option>
                         <option value="Second payment">Second payment</option>
@@ -365,6 +498,7 @@ const JobDetail = () => {
             </div>
           </div>
         </div>}
+        {showSnack && <ErrorSnackMessage message={errorMessage} />}
     </div>
   );
 };

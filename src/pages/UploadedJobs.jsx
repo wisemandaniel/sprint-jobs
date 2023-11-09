@@ -331,7 +331,7 @@ const AploadedJobs = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'numberOfPages') {
-      const calculatedPrice = value * 10;
+      const calculatedPrice = value * 4;
       setFormValues((prevFormValues) => ({
         ...prevFormValues,
         [name]: value,
@@ -348,6 +348,7 @@ const AploadedJobs = () => {
   const [data, setData] = useState([])
 
   const getUploadedJobs = async () => {
+    setLoading(true)
     const userData = localStorage.getItem('user')
     const user = JSON.parse(userData)
 
@@ -398,13 +399,13 @@ const AploadedJobs = () => {
       });
 
       if (response.ok) {
+        getUploadedJobs()
         setErrorMessage('JOB created successfully!')
-        // setShowModal(true)
+        setLoading(false)
         setError(false)
         setIsOpen(false)
       } else {
-        // const errorResponse = await response.json();
-        // throw new Error(errorResponse);
+        
       }
     } catch (error) {
       setError(true)
@@ -423,7 +424,7 @@ const AploadedJobs = () => {
 
     try {
       setLoading(false)
-      const response = await fetch(`${baseUrl}protected/files/uploadJob`, {
+      const response = await fetch(`${baseUrl}protected/jobs/files/uploadJob`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token
@@ -432,6 +433,7 @@ const AploadedJobs = () => {
       });
 
       if (response.ok) {
+        setLoading(false)
         console.error('Image upload success.');
         const responseData = await response.json();
         uploadJobInfo(responseData.id)
@@ -630,6 +632,9 @@ const AploadedJobs = () => {
         </div>
       )}
     </>
+    {loading && <div>
+      <LoadingSpinner />
+    </div>}
     </div>
   </div>
     </div>

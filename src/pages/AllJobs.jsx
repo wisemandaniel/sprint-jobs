@@ -61,7 +61,7 @@ const Card = ({ item }) => {
   return (
     <div>
         <div style={{backgroundColor: '#fff'}}
-                className="p-6 mt-5 rounded-lg shadow-lg mx-auto sm:w-3/6 m-4">
+                className="p-3 mt-5 rounded-lg shadow-lg mx-auto sm:w-5/6 m-4">
             <h3 className="text-xl font-semibold mb-2 text-gray-400">{t('uploaded_on')} {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
             <p className="mb-4 text-gray-600">{item.description}</p>
             <div className="flex flex-col justify-between items-center sm:flex-row">
@@ -72,7 +72,7 @@ const Card = ({ item }) => {
               }
             } className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">Start job</button>}
 
-              {item.jobTaken && <button disabled className="text-red-400 font-extrabold shadow-lg py-2 px-5 bg-red-100 rounded-md sm:mt-7">{t('taken')}</button>}
+              {item.jobTaken && <button disabled className="text-red-400 font-extrabold shadow-lg py-2 px-5 bg-red-100 rounded-md sm:mt-4">{t('taken')}</button>}
             </div>
         </div>
       
@@ -234,20 +234,15 @@ const AllJobs = () => {
             <div>
               {themeSettings && (<ThemeSettings />)}
             </div>
-            <div className="w-4/5 m-auto mt-20">
+           
+            <div className="w-4/5 m-auto mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-3 gap-1">
+              {data.map((card, index) => (
+                <Card key={index} item={card} />
+              ))}
 
-                <div style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>
-                  <div></div>
-                </div>
-
-                {data.map((card, index) => (
-                  <Card item={card} />
-                ))}
-
-                { data.length == 0 &&
-                  <p className='text-white text-center text-2xl mt-24'>{t('No_job_yet')}</p>
-                }
-                
+              {data.length === 0 && (
+                <p className='text-white text-center text-2xl mt-24'>{t('No_job_yet')}</p>
+              )}
             </div>
               
             {isOpen && (

@@ -370,14 +370,14 @@ const JobDetail = () => {
                     }
                 </div>
             </div>
-              {(parseInt(paidAmt) < parseInt(job.amount)) && (
+              {/* {(parseInt(paidAmt) < parseInt(job.amount)) && ( */}
                 <button
                   onClick={() => setIsMakePayment(true)}
                   className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded ml-auto mr-auto w-4/6"
                 >
                   Make payment
                 </button>
-              )}
+              {/* )} */}
 
                 {progress === 'COMPLETED' && <button onClick={downloadFile} className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded ml-auto mr-auto w-4/6">
                     Download file

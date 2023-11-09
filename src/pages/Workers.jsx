@@ -10,73 +10,8 @@ import baseUrl from './url';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import Modal from '../components/Modal/Modal';
 
-const Card = ({ item }) => {
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const openModal = (item) => {
-    setSelectedItem(item);
-  };
-
-  const closeModal = () => {
-    setSelectedItem(null);
-  };
-
-  return (
-    <div>
-        <div style={{backgroundColor: '#fff'}}
-                className="p-6 mt-5 rounded-lg shadow-lg mx-auto w-3/6 m-4">
-            <h3 className="text-xl font-semibold mb-2 text-gray-400">uploaded on {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
-            <p className="mb-4 text-gray-600">{item.description}</p>
-            <div className="flex flex-col justify-between items-center sm:flex-row">
-              <p className="text-green-400 font-extrabold"></p>
-              <button onClick={() => openModal(item)} className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
-            </div>
-        </div>
-      
-    
-
-        {selectedItem && (
-        <div className="fixed inset-0 flex items-center justify-center z-40">
-          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
-            <div className="max-h-96 overflow-y-auto">
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Number of days: </p> 
-                 <h2 className="text-2xl font-bold mb-6">{item.numberOfDays}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Number of pages: </p> 
-                 <h2 className="text-2xl font-bold mb-6">{item.numbersOfPages}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Amount: </p> 
-                 <h2 className="text-2xl font-bold mb-6 text-green-400">{item.amount} { item.currency}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Document type: </p> 
-                 <h2 className="text-2xl font-bold mb-6">{item.documentType}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Status: </p> 
-                 {item.jobTaken && <h2 className="text-2xl text-green-400 font-bold mb-6">Started</h2>}  
-                 {!item.jobTaken && <h2 className="text-2xl text-red-400 font-bold mb-6">Not started</h2>} 
-              </div>
-              <div className="flex justify-end mt-8">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
-              >
-                Cancel
-              </button>
-            </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+import SnackMessage from '../components/SnackBar/Snackbar';
+import ErrorSnackMessage from '../components/ErrorSnackbar/ErrorSnackbar';
 
 const Workers = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -86,6 +21,11 @@ const Workers = () => {
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [error, setError] = useState(false);
+
+  const [message, setMessage] = useState("")
+  const [errorText, setErrorText] = useState("")
+  const [errorSnack, setErrorSnack] = useState(false)
+  const [successSnack, setSuccessSnack] = useState(false)
 
   useEffect(() => {
     const userData = localStorage.getItem('user')
@@ -107,18 +47,6 @@ const Workers = () => {
   const openModal = () => {
     setIsOpen(true);
   };
-
-  const postJob = (e) => {
-    e.preventDefault();
-    console.log('IMAGES: ', formValues.images);
-    if (formValues.username && formValues.email && formValues.password) {
-        addWorker();
-    } else {
-      setErrorMessage('Please fill all information')
-      setShowModal(true)
-      setError(true)
-    }
-  }
 
   const [formValues, setFormValues] = useState({
     email: '',
@@ -163,18 +91,18 @@ const Workers = () => {
     }
   }
 
-  const addWorker = async (imageId) => {
+  const addWorker = async () => {
     setLoading(true)
 
     const data = {
       "email": formValues.email,
       "username": formValues.username,
+      "role": "ROLE_WORKER",
       "password": formValues.password,
     }
 
     try {
-      setLoading(false)
-      const response = await fetch(`${baseUrl}protected/user/worker`, {
+      const response = await fetch(`${baseUrl}protected/users`, {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -184,19 +112,32 @@ const Workers = () => {
       });
 
       if (response.ok) {
-        getWorkers()
-        setErrorMessage('JOB created successfully!')
-        // setShowModal(true)
-        setError(false)
+        setLoading(false)
         setIsOpen(false)
+        getWorkers()
+        setMessage('Worker has been created')
+        setSuccessSnack(true)
+
+        setTimeout(() => {
+          setSuccessSnack(false)
+        }, 3000)
       } else {
-        // const errorResponse = await response.json();
-        // throw new Error(errorResponse);
+        setLoading(false)
+        setErrorText("An eeror occured")
+        setErrorSnack(true)
+
+        setTimeout(() => {
+          setErrorSnack(false)
+        }, 3000)
       }
     } catch (error) {
-      setError(true)
       setLoading(false)
-      console.log('error: ', error.message);
+      setErrorText(error.message)
+      setErrorSnack(true)
+
+      setTimeout(() => {
+        setErrorSnack(false)
+      }, 3000)
     }
   }
 
@@ -386,7 +327,7 @@ const Workers = () => {
               </button>
               <button
                 type="submit"
-                onClick={postJob}
+                onClick={addWorker}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
               >
                 Upload
@@ -395,6 +336,8 @@ const Workers = () => {
           </div>
         </div>
       )}
+      {errorSnack && <ErrorSnackMessage message={errorText} />}
+      {successSnack && <SnackMessage message={message} />}
     </>
     </div>
   </div>

@@ -9,123 +9,8 @@ import { useTranslation } from 'react-i18next';
 import { t } from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import { setImage } from '@syncfusion/ej2/spreadsheet';
-
-const Card = ({ item }) => {
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false);
-  const navigate = useNavigate()
-
-  const openModal = (item) => {
-    setSelectedItem(item);
-  };
-
-  const closeModal = () => {
-    setSelectedItem(null);
-  };
-
-  const startJob = async (jobId) => {
-
-    const userData = localStorage.getItem('user')
-    const user = JSON.parse(userData)
-
-    setLoading(true)
-
-    const data = {
-      "jobId": jobId,
-    }
-
-    try {
-      setLoading(false)
-      const response = await fetch(`${baseUrl}protected/jobs/start?jobId=${jobId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': 'Bearer ' + user.accessToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-
-      if (response.ok) {
-        alert('Successfully started this job')
-      } else {
-        
-      }
-    } catch (error) {
-      setError(true)
-      setLoading(false)
-      console.log('error: ', error.message);
-    }
-  }
-
-  return (
-    <div>
-        <div style={{backgroundColor: '#fff'}}
-                className="p-3 mt-5 rounded-lg shadow-lg mx-auto sm:w-5/6 m-4">
-            <h3 className="text-xl font-semibold mb-2 text-gray-400">{t('uploaded_on')} {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
-            <p className="mb-4 text-gray-600">{item.description}</p>
-            <div className="flex flex-col justify-between items-center sm:flex-row">
-              <p className="text-green-400 font-extrabold"></p>
-              {!(item.jobTaken) && <button onClick={() => 
-              {
-                  navigate(`/dashboard/AllJob/${item.id}`) 
-              }
-            } className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">Start job</button>}
-
-              {item.jobTaken && <button disabled className="text-red-400 font-extrabold shadow-lg py-2 px-5 bg-red-100 rounded-md sm:mt-4">{t('taken')}</button>}
-            </div>
-        </div>
-      
-
-        {selectedItem && (
-        <div className="fixed inset-0 flex items-center justify-center z-40">
-          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
-            <div className="max-h-96 overflow-y-auto">
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Number of days: </p> 
-                 <h2 className="text-2xl font-bold mb-6">{item.numberOfDays}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Number of pages: </p> 
-                 <h2 className="text-2xl font-bold mb-6">{item.numbersOfPages}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Amount: </p> 
-                 <h2 className="text-2xl font-bold mb-6 text-green-400">{item.amount} { item.currency}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Document type: </p> 
-                 <h2 className="text-2xl font-bold mb-6">{item.documentType}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text-xl mb-6">Status: </p> 
-                 {item.jobTaken && <h2 className="text-2xl text-green-400 font-bold mb-6">Started</h2>}  
-                 {!item.jobTaken && <h2 className="text-2xl text-red-400 font-bold mb-6">Not started</h2>} 
-              </div>
-              <div className="flex justify-between mt-8">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => startJob(item.id)}
-                  className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow"
-                >
-                  start job
-                </button>
-            </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+import { Grid, Paper, Typography, CircularProgress } from '@mui/material';
+import SmallCard from '../components/Card/Card';
 
 const AllJobs = () => {
   const { t } = useTranslation();
@@ -172,7 +57,7 @@ const AllJobs = () => {
 
     try {
       setLoading(false)
-      const response = await fetch(`${baseUrl}protected/jobs?pageNo=${0}&pageSize=${10}`, {
+      const response = await fetch(`${baseUrl}protected/jobs/created`, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + user.accessToken,
@@ -192,6 +77,8 @@ const AllJobs = () => {
       console.log('error: ', error.message);
     }
   }
+
+  const navigate = useNavigate()
 
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
@@ -234,16 +121,41 @@ const AllJobs = () => {
             <div>
               {themeSettings && (<ThemeSettings />)}
             </div>
-           
-            <div className="w-4/5 m-auto mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-3 gap-1">
-              {data.map((card, index) => (
-                <Card key={index} item={card} />
-              ))}
+            
+                <Grid style={{padding: '10px', marginLeft: 'auto', marginRight: 'auto', width: '95%', marginTop: '48px'}} container spacing={2}>
+                  {loading ? (
+                    <Grid item xs={12} textAlign="center">
+                      <CircularProgress />
+                    </Grid>
+                  ) : (
+                    data.map(item => (
+                      <Grid key={item.id} item xs={12} sm={6} md={4} lg={3}>
+                      {/* <Paper onClick = {() => {
+                        navigate(`/dashboard/AllJob/${item.id}`)
+                      }} className='bg-red-400' elevation={6} style={{ padding: '24px', cursor: 'pointer', borderRadius: '0px' }}>
+                         <div className='flex flex-row justify-between items-center'>
+                            <Typography variant="body">From</Typography>
+                            <Typography variant="h6">{item.creator.username}</Typography>
+                         </div>
+                         <div className='flex flex-row justify-between items-center mt-4'>
+                            <Typography variant="body">Date</Typography>
+                            <Typography className='text-green-500' variant="h6">{new Date(item.createdAt).toLocaleDateString()}</Typography>
+                         </div>
+                      </Paper> */}
+                      <SmallCard 
+                        onClick={() => {
+                        navigate(`/dashboard/AllJob/${item.id}`);
+                        }} item={item} />
+                      </Grid>
+
+                    ))
+                  )}
+                </Grid>
 
               {data.length === 0 && (
                 <p className='text-white text-center text-2xl mt-24'>{t('No_job_yet')}</p>
               )}
-            </div>
+            {/* </div> */}
               
             {isOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-1000 ml-auto mr-auto">

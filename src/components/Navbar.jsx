@@ -5,6 +5,7 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import { UserProfile } from '.';
 import { useStateContext } from '../contexts/ContextProvider';
+import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
   <TooltipComponent content={title} position="BottomCenter">
@@ -24,7 +25,7 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 );
 
 const Navbar = () => {
-  const { currentColor, activeMenu, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize } = useStateContext();
+  const { currentColor, activeMenu, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize, setColor, setMode, currentMode, setThemeSettings } = useStateContext();
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -68,6 +69,9 @@ const Navbar = () => {
       <NavButton title="Menu" customFunc={handleActiveMenu} color={currentColor} icon={<AiOutlineMenu />} />
       <div className="flex">
         <TooltipComponent content="Profile" position="BottomCenter">
+          
+        <div className='flex justify-between flex-row items-center'>
+        <WbSunnyOutlinedIcon color={currentMode === 'dark' ? 'white' : 'black'} />
           <div
             className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
             onClick={() => handleClick('userProfile')}
@@ -79,6 +83,7 @@ const Navbar = () => {
             </p>
             <MdKeyboardArrowDown className="text-gray-400 text-14" />
           </div>
+        </div>
         </TooltipComponent>
         {isClicked.userProfile && (<UserProfile />)}
       </div>

@@ -92,8 +92,6 @@ function Landing() {
                 
                 <Link to={'Registration'} className="w-full rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-blue-600 duration-200 sm:w-auto">{t('get_started')}</Link>
 
-                <Link to={'Registration'} className="mt-4 box-border w-full rounded-md border border-blue-500/20 px-8 py-2.5 font-semibold text-blue-500 shadow-md shadow-blue-500/10 duration-200 sm:ml-4 sm:mt-0 sm:w-auto ">{t('reg_now')}</Link>
-
             </div>
 
             <div className="hidden px-4 lg:block lg:w-1/12"></div>

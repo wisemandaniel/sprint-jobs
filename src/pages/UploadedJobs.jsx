@@ -10,262 +10,264 @@ import Modal from '../components/Modal/Modal';
 import { useTranslation } from 'react-i18next';
 import { t } from 'i18next';
 import { useNavigate } from 'react-router-dom';
+import SmallCard from '../components/Card/Card'
+import { Grid } from '@mui/material';
 
-const Card = ({ item }) => {
-  const { t } = useTranslation();
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [transactions, setTransactions] = useState([])
+// const Card = ({ item }) => {
+//   const { t } = useTranslation();
+//   const [selectedItem, setSelectedItem] = useState(null);
+//   const [transactions, setTransactions] = useState([])
 
-  const openModal = async (item) => {
-    const userData = localStorage.getItem('user')
-    const user = JSON.parse(userData)
+//   const openModal = async (item) => {
+//     const userData = localStorage.getItem('user')
+//     const user = JSON.parse(userData)
 
-    try {
-      // setLoading(false)
-      const response = await fetch(`${baseUrl}protected/payments/job?jobId=${item.id}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + user.accessToken,
-          'Content-Type': 'application/json'
-        }
-      });
+//     try {
+//       // setLoading(false)
+//       const response = await fetch(`${baseUrl}protected/payments/job?jobId=${item.id}`, {
+//         method: 'GET',
+//         headers: {
+//           'Authorization': 'Bearer ' + user.accessToken,
+//           'Content-Type': 'application/json'
+//         }
+//       });
 
-      if (response.ok) {
-        const responseData = await response.json();
-        const sortedTransactions = [...responseData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setTransactions(sortedTransactions)
-        console.log('sortedTransactions: ', sortedTransactions);
-        console.log('responseData: ', transactions);
-        setSelectedItem(item);
-      } else {
-        setSelectedItem(null);
-      }
-    } catch (error) {
-      console.log('error: ', error.message);
-    }
-  };
+//       if (response.ok) {
+//         const responseData = await response.json();
+//         const sortedTransactions = [...responseData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+//         setTransactions(sortedTransactions)
+//         console.log('sortedTransactions: ', sortedTransactions);
+//         console.log('responseData: ', transactions);
+//         setSelectedItem(item);
+//       } else {
+//         setSelectedItem(null);
+//       }
+//     } catch (error) {
+//       console.log('error: ', error.message);
+//     }
+//   };
 
-  const closeModal = () => {
-    setSelectedItem(null);
-  };
+//   const closeModal = () => {
+//     setSelectedItem(null);
+//   };
 
-  const [isPaymentOpen, setIsPaymentOpen] = useState(false)
-  const [id, setId] = useState('')
-  const [showText, setShowText] = useState(false)
+//   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
+//   const [id, setId] = useState('')
+//   const [showText, setShowText] = useState(false)
 
-  const navigate = useNavigate()
+//   const navigate = useNavigate()
 
-  const openPaymentModal = () => {
-    setId(id)
-    setIsPaymentOpen(true)
-  }
+//   const openPaymentModal = () => {
+//     setId(id)
+//     setIsPaymentOpen(true)
+//   }
 
-  const makePayment = async (id) => {
-    // setLoading(true)
+//   const makePayment = async (id) => {
+//     // setLoading(true)
     
-    const userData = localStorage.getItem('user')
-    const user = JSON.parse(userData)
+//     const userData = localStorage.getItem('user')
+//     const user = JSON.parse(userData)
 
-    const data = {
-      "amount": formValues.amount,
-      "from": '237' + formValues.phoneNumber,
-      "currency": 'XAF',
-      "description": `Job payment for ${user.email}`
-    }
+//     const data = {
+//       "amount": formValues.amount,
+//       "from": '237' + formValues.phoneNumber,
+//       "currency": 'XAF',
+//       "description": `Job payment for ${user.email}`
+//     }
 
-    console.log('Data: ', data);
+//     console.log('Data: ', data);
 
-    try {
-      // setLoading(false)
-      const response = await fetch(`${baseUrl}protected/payments?jobId=${id}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + user.accessToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+//     try {
+//       // setLoading(false)
+//       const response = await fetch(`${baseUrl}protected/payments?jobId=${id}`, {
+//         method: 'POST',
+//         headers: {
+//           'Authorization': 'Bearer ' + user.accessToken,
+//           'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify(data)
+//       });
 
-      if (response.ok) {
-        const response2 = await response.json();
-        console.log('Payment response: ', response2);
-        // setErrorMessage('JOB created successfully!')
-        // setShowModal(true)
-        // setError(false)
-        // setIsOpen(false)
-      } else {
-        // const errorResponse = await response.json();
-        // throw new Error(errorResponse);
-      }
-    } catch (error) {
-      // setError(true)
-      // setLoading(false)
-      console.log('error: ', error.message);
-    }
-  }
+//       if (response.ok) {
+//         const response2 = await response.json();
+//         console.log('Payment response: ', response2);
+//         // setErrorMessage('JOB created successfully!')
+//         // setShowModal(true)
+//         // setError(false)
+//         // setIsOpen(false)
+//       } else {
+//         // const errorResponse = await response.json();
+//         // throw new Error(errorResponse);
+//       }
+//     } catch (error) {
+//       // setError(true)
+//       // setLoading(false)
+//       console.log('error: ', error.message);
+//     }
+//   }
 
 
-  const [formValues, setFormValues] = useState({
-    amount: '',
-    phoneNumber: '',
-  });
+//   const [formValues, setFormValues] = useState({
+//     amount: '',
+//     phoneNumber: '',
+//   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-      setFormValues((prevFormValues) => ({
-        ...prevFormValues,
-        [name]: value,
-      }));
-  };
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//       setFormValues((prevFormValues) => ({
+//         ...prevFormValues,
+//         [name]: value,
+//       }));
+//   };
 
-  return (
-    <div>
-        <div style={{backgroundColor: '#fff'}}
-                className="p-6 mt-5 rounded-lg shadow-lg mx-auto sm:w-3/6 m-4">
-            <h3 className="text-xl font-semibold mb-2 text-gray-400">{t('uploaded_on')} {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
-            <p className="mb-4 text-gray-600">{item.description}</p>
-            <div className="flex flex-col justify-between items-center sm:flex-row">
-              <p className="text-green-400 font-extrabold"></p>
-              <button onClick={() => {
-                 navigate(`/dashboard/Job/${item.id}`)
-              } } className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
-            </div>
-        </div>
+//   return (
+//     <div>
+//         <div style={{backgroundColor: '#fff'}}
+//                 className="p-6 mt-5 rounded-lg shadow-lg mx-auto sm:w-3/6 m-4">
+//             <h3 className="text-xl font-semibold mb-2 text-gray-400">{t('uploaded_on')} {item.createdAt.replace(/^(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')}</h3>
+//             <p className="mb-4 text-gray-600">{item.description}</p>
+//             <div className="flex flex-col justify-between items-center sm:flex-row">
+//               <p className="text-green-400 font-extrabold"></p>
+//               <button onClick={() => {
+//                  navigate(`/dashboard/Job/${item.id}`)
+//               } } className="text-green-400 font-extrabold shadow-lg py-2 px-5 bg-green-100 rounded-md sm:mt-7">View more</button>
+//             </div>
+//         </div>
       
     
 
-        {selectedItem && (
-        <div className="fixed inset-0 flex items-center justify-center z-40">
-          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
-            <div className="max-h-5/6 overflow-y-auto">
-              <div className='flex flex-row justify-between'>
-                <h3 className='text-2xl font-bold'></h3>
-                <button 
-                className='mb-4 text-2xl'
-                onClick={closeModal}>x</button>
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text mb-6">Number of days: </p> 
-                 <h2 className="text font-bold mb-6">{item.numberOfDays}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text mb-6">Number of pages: </p> 
-                 <h2 className="text font-bold mb-6">{item.numbersOfPages}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text mb-6">Amount: </p> 
-                 <h2 className="text font-bold mb-6 text-green-400">{item.amount} { item.currency}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text mb-6">Document type: </p> 
-                 <h2 className="text font-bold mb-6">{item.documentType}</h2> 
-              </div>
-              <div className='flex justify-between'>
-                 <p className="text mb-6">Status: </p> 
-                 {item.jobTaken && <h2 className="text text-green-400 font-bold mb-6">Started</h2>}  
-                 {!item.jobTaken && <h2 className="text text-red-400 font-bold mb-6">Not started</h2>} 
-              </div>
-              {(transactions.length > 0 && transactions.transactionStatus  === 'SUCCESS') &&<div className='flex justify-between'>
-                 <p className="text mb-6">Amount paid: </p> 
-                 {item.jobTaken && <h2 className="text text-green-400 font-bold mb-6">Started</h2>}  
-                 {!item.jobTaken && <h2 className="text text-red-400 font-bold mb-6">{transactions.amount}</h2>} 
-              </div>}
-              {transactions === 0 &&<div className='flex justify-between'>
-                 <p className="text mb-6">Payment status: </p> 
-                 {item.jobTaken && <h2 className="text text-green-400 font-bold mb-6">Started</h2>}  
-                 {!item.jobTaken && <h2 className="text text-red-400 font-bold mb-6">Not Paid</h2>} 
-              </div>}
-              {transactions.length > 0 && <div className='flex justify-between'>
-                 <p className="text mb-6">Payment status: </p>
-                 {(transactions[0].transactionStatus === 'FAILED') && <h2 className="text text-red-400 font-bold mb-6">{transactions[0].transactionStatus}</h2>}
-                 {(transactions[0].transactionStatus === 'PENDING') && <h2 className="text text-orange-400 font-bold mb-6">{transactions[0].transactionStatus}</h2>}
-              </div>}
-              <div className="flex mt-4 items-center justify-center">
-              <button
-                type="button"
-                onClick={() => openPaymentModal(item.id)}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow mt-2 w-full"
-              >
-                Make payment
-              </button>
-            </div>
-            </div>
-          </div>
-        </div>
-      )}
+//         {selectedItem && (
+//         <div className="fixed inset-0 flex items-center justify-center z-40">
+//           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
+//           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
+//             <div className="max-h-5/6 overflow-y-auto">
+//               <div className='flex flex-row justify-between'>
+//                 <h3 className='text-2xl font-bold'></h3>
+//                 <button 
+//                 className='mb-4 text-2xl'
+//                 onClick={closeModal}>x</button>
+//               </div>
+//               <div className='flex justify-between'>
+//                  <p className="text mb-6">Number of days: </p> 
+//                  <h2 className="text font-bold mb-6">{item.numberOfDays}</h2> 
+//               </div>
+//               <div className='flex justify-between'>
+//                  <p className="text mb-6">Number of pages: </p> 
+//                  <h2 className="text font-bold mb-6">{item.numbersOfPages}</h2> 
+//               </div>
+//               <div className='flex justify-between'>
+//                  <p className="text mb-6">Amount: </p> 
+//                  <h2 className="text font-bold mb-6 text-green-400">{item.amount} { item.currency}</h2> 
+//               </div>
+//               <div className='flex justify-between'>
+//                  <p className="text mb-6">Document type: </p> 
+//                  <h2 className="text font-bold mb-6">{item.documentType}</h2> 
+//               </div>
+//               <div className='flex justify-between'>
+//                  <p className="text mb-6">Status: </p> 
+//                  {item.jobTaken && <h2 className="text text-green-400 font-bold mb-6">Started</h2>}  
+//                  {!item.jobTaken && <h2 className="text text-red-400 font-bold mb-6">Not started</h2>} 
+//               </div>
+//               {(transactions.length > 0 && transactions.transactionStatus  === 'SUCCESS') &&<div className='flex justify-between'>
+//                  <p className="text mb-6">Amount paid: </p> 
+//                  {item.jobTaken && <h2 className="text text-green-400 font-bold mb-6">Started</h2>}  
+//                  {!item.jobTaken && <h2 className="text text-red-400 font-bold mb-6">{transactions.amount}</h2>} 
+//               </div>}
+//               {transactions === 0 &&<div className='flex justify-between'>
+//                  <p className="text mb-6">Payment status: </p> 
+//                  {item.jobTaken && <h2 className="text text-green-400 font-bold mb-6">Started</h2>}  
+//                  {!item.jobTaken && <h2 className="text text-red-400 font-bold mb-6">Not Paid</h2>} 
+//               </div>}
+//               {transactions.length > 0 && <div className='flex justify-between'>
+//                  <p className="text mb-6">Payment status: </p>
+//                  {(transactions[0].transactionStatus === 'FAILED') && <h2 className="text text-red-400 font-bold mb-6">{transactions[0].transactionStatus}</h2>}
+//                  {(transactions[0].transactionStatus === 'PENDING') && <h2 className="text text-orange-400 font-bold mb-6">{transactions[0].transactionStatus}</h2>}
+//               </div>}
+//               <div className="flex mt-4 items-center justify-center">
+//               <button
+//                 type="button"
+//                 onClick={() => openPaymentModal(item.id)}
+//                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow mt-2 w-full"
+//               >
+//                 Make payment
+//               </button>
+//             </div>
+//             </div>
+//           </div>
+//         </div>
+//       )}
 
-{isPaymentOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-40">
-          <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
-            <div className="max-h-5/6 overflow-y-auto">
-              <div className='flex flex-row justify-between'>
-                <h3 className='text-2xl font-bold'></h3>
-                <button 
-                className='mb-4 text-2xl'
-                onClick={() => setIsPaymentOpen(false)}>x</button>
-              </div>
-              <div className="mb-12">
-                <label htmlFor="firstName" className="block mb-2 font-bold">
-                  {t('amount')}
-                </label>
-                <input
-                  onChange={handleInputChange}
-                  name="amount"
-                  placeholder={t('Enter_amount_to_pay')}
-                  type="number"
-                  min="0"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div className="relative flex items-center">
-                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-gray-600">
-                    +237
-                  </div>
-                  <input
-                    value={formValues.phoneNumber}
-                    name="phoneNumber"
-                    onChange={handleInputChange}
-                    placeholder="Enter user's phone number"
-                    type="tel"
-                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pl-12"
-                  />
-                </div>
-              {/* <div className="mb-12">
-                <label htmlFor="firstName" className="block mb-2 font-bold">
-                  {t('momo_number')}
-                </label>
-                <input
-                  onChange={handleInputChange}
-                  name="phoneNumber"
-                  placeholder={t('enter_momo_number')}
-                  type="number"
-                  min="0"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div> */}
-              {showText && <div className="mt-12">
-                <label htmlFor="firstName" className="block mb-2 text-center">
-                  {t('dial_*126#')}
-                </label>
-              </div>}
-              {!showText && <div className="flex mt-16 items-center justify-center">
-              <button
-                type="button"
-                onClick={() => makePayment(item.id)}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow mt-2 w-full"
-              >
-                Make payment
-              </button>
-            </div>}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+// {isPaymentOpen && (
+//         <div className="fixed inset-0 flex items-center justify-center z-40">
+//           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
+//           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 relative z-10">
+//             <div className="max-h-5/6 overflow-y-auto">
+//               <div className='flex flex-row justify-between'>
+//                 <h3 className='text-2xl font-bold'></h3>
+//                 <button 
+//                 className='mb-4 text-2xl'
+//                 onClick={() => setIsPaymentOpen(false)}>x</button>
+//               </div>
+//               <div className="mb-12">
+//                 <label htmlFor="firstName" className="block mb-2 font-bold">
+//                   {t('amount')}
+//                 </label>
+//                 <input
+//                   onChange={handleInputChange}
+//                   name="amount"
+//                   placeholder={t('Enter_amount_to_pay')}
+//                   type="number"
+//                   min="0"
+//                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+//                 />
+//               </div>
+//               <div className="relative flex items-center">
+//                   <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-gray-600">
+//                     +237
+//                   </div>
+//                   <input
+//                     value={formValues.phoneNumber}
+//                     name="phoneNumber"
+//                     onChange={handleInputChange}
+//                     placeholder="Enter user's phone number"
+//                     type="tel"
+//                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pl-12"
+//                   />
+//                 </div>
+//               {/* <div className="mb-12">
+//                 <label htmlFor="firstName" className="block mb-2 font-bold">
+//                   {t('momo_number')}
+//                 </label>
+//                 <input
+//                   onChange={handleInputChange}
+//                   name="phoneNumber"
+//                   placeholder={t('enter_momo_number')}
+//                   type="number"
+//                   min="0"
+//                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+//                 />
+//               </div> */}
+//               {showText && <div className="mt-12">
+//                 <label htmlFor="firstName" className="block mb-2 text-center">
+//                   {t('dial_*126#')}
+//                 </label>
+//               </div>}
+//               {!showText && <div className="flex mt-16 items-center justify-center">
+//               <button
+//                 type="button"
+//                 onClick={() => makePayment(item.id)}
+//                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow mt-2 w-full"
+//               >
+//                 Make payment
+//               </button>
+//             </div>}
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
 
 const AploadedJobs = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -275,6 +277,7 @@ const AploadedJobs = () => {
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [error, setError] = useState(false);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const userData = localStorage.getItem('user')
@@ -496,9 +499,22 @@ const AploadedJobs = () => {
                   </button>
                 </div>
 
-                {data.map((card, index) => (
-                  <Card item={card} />
-                ))}
+                <Grid style={{padding: '10px', marginLeft: 'auto', marginRight: 'auto', width: '95%', marginTop: '48px'}} container spacing={2}>
+                  {loading ? (
+                    <Grid item xs={12} textAlign="center">
+                      <CircularProgress />
+                    </Grid>
+                  ) : (
+                    data.map(item => (
+                      <Grid key={item.id} item xs={12} sm={6} md={4} lg={3}>
+                      <SmallCard
+                          onClick={() => {
+                            navigate(`/dashboard/Job/${item.id}`)
+                          }} item={item} />
+                      </Grid>
+                    ))
+                  )}
+                </Grid>
 
                 { data.length == 0 &&
                   <p className='text-white text-center text-2xl mt-24'>{t('No_job_yet')}</p>

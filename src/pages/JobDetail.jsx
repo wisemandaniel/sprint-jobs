@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { Navbar, Sidebar, ThemeSettings } from '../components';
 import '../App.css';
@@ -9,6 +10,13 @@ import { t } from 'i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import cameroon from '../data/cameroon.png'
 import ErrorSnackMessage from '../components/ErrorSnackbar/ErrorSnackbar';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const JobDetail = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -25,7 +33,6 @@ const JobDetail = () => {
   const [showSnack, setShowSnack] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [progress, setProgress] = useState('');
-  const [fileUrl, setFileUrl] = useState('')
 
   const navigate = useNavigate()
 
@@ -235,11 +242,11 @@ const JobDetail = () => {
       setPaidAmt(totalAmount)
       
       if (totalAmount === job.amount) {
+        setLoading(true)
          const url = `${baseUrl}protected/jobs/completed/files?jobId=${jobId}`
          
         const userData = localStorage.getItem('user')
         const user = JSON.parse(userData)
-
         try {
           const response = await fetch(url, {
             method: 'GET',
@@ -253,7 +260,9 @@ const JobDetail = () => {
             setLoading(false)
             const responseData = await response.json();
             console.log('JOB FILE: ', responseData);
-            setFileUrl(responseData[0].url)
+
+            handleDownload(responseData[0].url, responseData[0].name)
+            // setFileUrl(responseData[0].url)
           } else {
             setLoading(false)
           }
@@ -271,6 +280,33 @@ const JobDetail = () => {
       }
     }
   }
+
+  const [showSuccessSnack, setShowSuccessSnack] = useState(false)
+  const [message, setMessage] = useState('')
+
+  const handleDownload = (url, name) => {
+    setLoading(true)
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', name);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setMessage('File downloaded successfully')
+        setShowSuccessSnack(true)
+        setLoading(false)
+      })
+      .catch(error => {
+        setLoading(false)
+        setErrorMessage(`Error downloading file: , ${error}`)
+        setShowSnack(true)
+      });
+  };
+
 
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
@@ -318,15 +354,15 @@ const JobDetail = () => {
                     <h2 className='text-center mb-8 text-2xl'>Job Detail</h2>
             <div className=' lg:flex'>
                 <div className="lg:w-1/2 mt-6 lg:mt-0 lg:ml-6">
-                    <div className="bg-gray-200 p-4 rounded-lg flex flex-row justify-between">
+                    <div className="bg-gray-200 p-4 rounded-lg flex flex-col sm:justify-between sm:flex-row justify-center items-center">
                     <p className="text-gray-600">Number of pages</p>
                     <p className="font-semibold text">{job.numbersOfPages}</p>
                     </div>
-                    <div className="bg-gray-200 p-4 rounded-lg mt-4 flex flex-row justify-between">
+                    <div className="bg-gray-200 p-4 rounded-lg mt-4 flex flex-col sm:justify-between sm:flex-row justify-center items-center">
                     <p className="text-gray-600">Job Duration in days</p>
                     <p className="font-semibold text">{job.numberOfDays}</p>
                     </div>
-                    <div className="bg-gray-200 p-4 rounded-lg mt-4 flex flex-row justify-between">
+                    <div className="bg-gray-200 p-4 rounded-lg mt-4 flex flex-col sm:justify-between sm:flex-row justify-center items-center">
                     <p className="text-gray-600">Created On</p>
                     <p className="font-semibold">{new Date(job.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -334,7 +370,7 @@ const JobDetail = () => {
                     day: 'numeric',
                     })}</p>
                     </div>
-                    <div className="bg-gray-200 p-4 rounded-lg mt-4 flex flex-row justify-between">
+                    <div className="bg-gray-200 p-4 rounded-lg mt-4 flex flex-col sm:justify-between sm:flex-row justify-center items-center">
                     <p className="text-gray-600">Job Status</p>
                     {progress === 'STARTED' && <p className="text-lg font-semibold text-green-400">{progress} </p>}
                     {progress === 'IN PROGRESS' && <p className="text-lg font-semibold text-green-500">{progress} </p>}
@@ -346,24 +382,24 @@ const JobDetail = () => {
                     </div>
                 </div>
                 <div className="lg:w-1/2 mt-6 lg:mt-0 lg:ml-6">
-                    <div className="bg-gray-200 p-4 rounded-lg mb-4 flex flex-row justify-between">
-                        <p className="text-gray-600">Total amount to be paid</p>
+                    <div className="bg-gray-200 p-4 rounded-lg mb-4 flex flex-col sm:justify-between sm:flex-row justify-center items-center">
+                        <p className="text-gray-600">Total amount</p>
                         <p className="font-semibold text-green-600">{job.amount} XAF</p>
                     </div>
                     {transactions.map((transaction) => (
-                        <div key={transaction.id} className="bg-gray-200 p-4 rounded-lg flex flex-row justify-between mb-4">
+                        <div key={transaction.id} className="bg-gray-200 p-4 rounded-lg flex flex-col sm:justify-between sm:flex-row justify-center items-center mb-4">
                         <p className="text-gray-600">{transaction.description}</p>
                         <p className="font-semibold text-green-600">{`${transaction.amount} XAF`}</p>
                         </div>
                     ))}
                     {transactions.length === 0 &&
                     <>
-                        <div className="bg-gray-200 p-4 rounded-lg flex flex-row justify-between">
-                            <p className="text-gray-600">First payment amount</p>
+                        <div className="bg-gray-200 p-4 rounded-lg flex flex-col sm:justify-between sm:flex-row justify-center items-center">
+                            <p className="text-gray-600">First payment</p>
                             <p className="font-semibold text-red-300">Not paid</p>
                         </div>
-                        <div className="bg-gray-200 p-4 rounded-lg flex flex-row justify-between mt-4">
-                            <p className="text-gray-600">Second payment amount</p>
+                        <div className="bg-gray-200 p-4 rounded-lg flex flex-col sm:justify-between sm:flex-row justify-center items-center mt-4">
+                            <p className="text-gray-600">Second payment</p>
                             <p className="font-semibold text-red-300">Not paid</p>
                         </div>
                     </>
@@ -373,7 +409,7 @@ const JobDetail = () => {
               {/* {(parseInt(paidAmt) < parseInt(job.amount)) && ( */}
                 <button
                   onClick={() => setIsMakePayment(true)}
-                  className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded ml-auto mr-auto w-4/6"
+                  className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded ml-auto mr-auto sm:w-4/6 w-full"
                 >
                   Make payment
                 </button>
@@ -383,13 +419,46 @@ const JobDetail = () => {
                     Download file
                 </button>}
             </div>
+       {loading && <LoadingSpinner />}
+        {showSnack && 
+            <Snackbar
+            open={showModal}
+            autoHideDuration={5000}
+            onClose={() => setShowModal(false)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={() => setShowModal(false)}
+              severity="error"
+            >
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+        }
+        {showSuccessSnack && 
+            <div style={{marginTop: '8px'}}>
+              <Snackbar
+                open={showSuccessSnack}
+                autoHideDuration={3000}
+                onClose={() => setShowSuccessSnack(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              >
+                <Alert
+                  onClose={() => setShowSuccessSnack(false)}
+                  severity="success"
+                >
+                  {message}
+                </Alert>
+              </Snackbar>
+            </div>
+        }
         </div>
     </div>
   </div>
 
         {isMakePayment && <div className="fixed inset-0 flex items-center justify-center z-40 mt-16">
           <div className="fixed inset-0 bg-gray-900 opacity-50"></div>
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-4/6 mx-4 relative z-10">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md sm:w-4/6 m-4 relative z-10 w-full">
             <div className="max-h-5/6 overflow-y-auto">
                 <div className='flex flex-row justify-between border-b border-gray-300 mb-6'>
                     <h3 className='text-xl text-gray-600'>Pay for Job</h3>
@@ -498,7 +567,6 @@ const JobDetail = () => {
             </div>
           </div>
         </div>}
-        {showSnack && <ErrorSnackMessage message={errorMessage} />}
     </div>
   );
 };

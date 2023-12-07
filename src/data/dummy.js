@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { FiCreditCard } from 'react-icons/fi';
 import { BsCurrencyDollar, BsShield } from 'react-icons/bs';

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';

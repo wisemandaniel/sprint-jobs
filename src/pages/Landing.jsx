@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import logo from '../data/logo.jpg'
 import hero from '../data/images/hero.png'
@@ -58,7 +59,7 @@ function Landing() {
 
             </div>
             <div className="flex justify-between items-center">
-            <div className="relative inline-block">
+            {/* <div className="relative inline-block">
       <select
         className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500"
         onChange={handleSelectChange}
@@ -74,8 +75,8 @@ function Landing() {
         </svg>
         {selectedValue && <span className="">{selectedValue}</span>}
       </div>
-    </div>
-                <Link to={'Registration'} className="ml-10 mr-10 hidden rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 duration-200 hover:bg-blue-600 sm:block lg:mr-0">{t('Register_text')}</Link>
+            </div> */}
+                <Link to={'Registration'} className="ml-10 mr-10 hidden rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 duration-200 hover:bg-blue-600 sm:block lg:mr-0">Register</Link>
             </div>
         </div>
     </div>
@@ -86,11 +87,11 @@ function Landing() {
     <div className="mx-auto max-w-7xl px-8 md:px-6">
         <div className="flex flex-wrap">
             <div className="w-full lg:w-5/12">
-                <h1 className="text-slate-800 mb-3 text-4xl font-bold leading-snug sm:text-[42px] lg:text-[40px] xl:text-[42px]">{t('welcome_text_1')} <span className="text-blue-600">{t('in_seconds')}</span></h1>
-                <p className="text-slate-500 mb-8 max-w-[480px] text-base">{t('base_text')}
+                <h1 className="text-slate-800 mb-3 text-4xl font-bold leading-snug sm:text-[42px] lg:text-[40px] xl:text-[42px]">Get your documents processed <span className="text-blue-600">within minutes</span></h1>
+                <p className="text-slate-500 mb-8 max-w-[480px] text-base">Data Entry, content writing, proof reading, online surveys, translation, typing, Graphics designs, rephrasing etc
                 </p>
                 
-                <Link to={'Registration'} className="w-full rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-blue-600 duration-200 sm:w-auto">{t('get_started')}</Link>
+                <Link to={'Registration'} className="w-full rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-blue-600 duration-200 sm:w-auto">Get Started</Link>
 
             </div>
 
@@ -114,22 +115,22 @@ function Landing() {
                 <div className="mb-5 sm:mb-10">
                     <h1 className="text-2xl font-bold text-slate-700 sm:text-3xl">SprintJobs</h1>
                 </div>
-                <p className="text-slate-500 mb-6">{t('brief_text')}</p>
+                <p className="text-slate-500 mb-6">"We provide a platform for users to upload their document and get them typed by other users who get paid.</p>
                 <ul>
                     <li className="mb-6 flex items-center">
                         <div className="flex h-[35px] w-[35px] min-w-[35px] items-center justify-center rounded-full bg-blue-500 text-white">
                             <ion-icon name="briefcase-outline"></ion-icon>
                         </div>
-                        <p className="ml-4 max-w-md font-medium text-slate-600">{t('first_point')}</p>
+                        <p className="ml-4 max-w-md font-medium text-slate-600">Upload document in image format.</p>
                     </li>
                     <li className="mb-6 flex items-center">
                         <div className="flex h-[35px] w-[35px] min-w-[35px] items-center justify-center rounded-full bg-blue-500 text-white">
                             <ion-icon name="mail-unread-outline"></ion-icon>
                         </div>
-                        <p className="ml-4 max-w-md font-medium text-slate-600">{t('second_point')}</p>
+                        <p className="ml-4 max-w-md font-medium text-slate-600">Your documents are typed by professionals in due time.</p>
                     </li>
                 </ul>
-                 <Link to={'Registration'} className="w-full rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-blue-600 duration-200 md:w-max">{t('get_started')}</Link>
+                 <Link to={'Registration'} className="w-full rounded-md bg-blue-500 px-8 py-2.5 font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-blue-600 duration-200 md:w-max">Get Started</Link>
             </div>
 
             <div className="mt-8 flex justify-center md:mt-0 md:w-5/12">
@@ -147,15 +148,15 @@ function Landing() {
 
             <div className="w-full px-4 md:w-1/2 xl:w-6/12">
                 <div className="mb-12 max-w-[570px] lg:mb-0">
-                    <h1 className="mb-3 text-2xl font-bold text-slate-700 sm:text-3xl">{t('get_in_touch')}</h1>
-                    <p className="text-slate-500 mb-8">{t('have_worry')}</p>
+                    <h1 className="mb-3 text-2xl font-bold text-slate-700 sm:text-3xl">GET IN TOUCH WITH US</h1>
+                    <p className="text-slate-500 mb-8">Do you have any worry or any issues? then get to us now</p>
                     
                     <div className="mb-8 flex w-full max-w-[420px] items-center rounded-lg bg-white p-4 shadow-md shadow-blue-500/10">
                         <div className="mr-6 flex h-[60px] w-full max-w-[60px] items-center justify-center overflow-hidden rounded bg-blue-500 bg-opacity-5 text-blue-500 sm:h-[70px] sm:max-w-[70px]">
                             <ion-icon name="location-outline" className="text-3xl"></ion-icon>
                         </div>
                         <div className="w-full">
-                            <h4 className="mb-1 text-xl font-bold text-slate-700">{t('location')}</h4>
+                            <h4 className="mb-1 text-xl font-bold text-slate-700">Our Location</h4>
                             <p className="text-base text-slate-400
                             ">Molyko. Buea</p>
                         </div>
@@ -166,8 +167,7 @@ function Landing() {
                             <ion-icon name="call-outline" className="text-3xl"></ion-icon>
                         </div>
                         <div className="w-full">
-                            <h4 className="mb-1 text-xl font-bold text-slate-700">{t
-                            ('phone')}</h4>
+                            <h4 className="mb-1 text-xl font-bold text-slate-700">Phone number</h4>
                             <p className="text-base text-slate-400
                             ">(+237) 678 313 613</p>
                         </div>
@@ -177,7 +177,7 @@ function Landing() {
                             <ion-icon name="mail-outline" className="text-3xl"></ion-icon>
                         </div>
                         <div className="w-full">
-                            <h4 className="mb-1 text-xl font-bold text-slate-700">{t('email')}</h4>
+                            <h4 className="mb-1 text-xl font-bold text-slate-700">Email</h4>
                             <p className="text-base text-slate-400
                             ">company@gmail.com</p>
                         </div>
@@ -187,7 +187,7 @@ function Landing() {
                 </div>
             </div>
 
-            <div className="w-full px-4 md:w-1/2 xl:w-5/12">
+            {/* <div className="w-full px-4 md:w-1/2 xl:w-5/12">
                 <div className="relative rounded-lg bg-white p-8 shadow-lg shadow-blue-500/10 sm:p-12">
                     <form action="">
                         <div className="mb-6">
@@ -207,7 +207,7 @@ function Landing() {
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> */}
         </div>
     </div>
 </section>

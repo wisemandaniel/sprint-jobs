@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
@@ -25,7 +26,7 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="https://sprint-jobs-a81df.web.app/">
         sprint-jobs
       </Link>{' '}
       {new Date().getFullYear()}

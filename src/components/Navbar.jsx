@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { MdKeyboardArrowDown } from 'react-icons/md';
@@ -71,7 +72,7 @@ const Navbar = () => {
         <TooltipComponent content="Profile" position="BottomCenter">
           
         <div className='flex justify-between flex-row items-center'>
-        <WbSunnyOutlinedIcon color={currentMode === 'dark' ? 'white' : 'black'} />
+        {/* <WbSunnyOutlinedIcon color={currentMode === 'dark' ? 'white' : 'black'} /> */}
           <div
             className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
             onClick={() => handleClick('userProfile')}

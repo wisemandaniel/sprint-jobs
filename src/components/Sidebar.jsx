@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { SiShopware } from 'react-icons/si';
@@ -63,7 +64,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? dashboardColor : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{t('Dashboard')}</span>
+                    <span className="capitalize ">Dashboard</span>
                   </NavLink>
               </div>}
               {(role === 'ROLE_ADMIN' || role === 'ROLE_WORKER')  && <div>
@@ -77,7 +78,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{t('All_Jobs')}</span>
+                    <span className="capitalize ">All Jobs</span>
                   </NavLink>
               </div>}
               {(role === 'ROLE_ADMIN' || role === 'ROLE_USER') && <div>
@@ -91,7 +92,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{t('Uploaded_Jobs')}</span>
+                    <span className="capitalize ">Uploaded Jobs</span>
                   </NavLink>
               </div>}
              {(role === 'ROLE_ADMIN' || role === 'ROLE_WORKER') && <div>
@@ -105,7 +106,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{t('Applied_Jobs')}</span>
+                    <span className="capitalize ">Applied Jobs</span>
                   </NavLink>
               </div>}
              {(role === 'ROLE_ADMIN') && <div>
@@ -119,7 +120,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{t('Workers')}</span>
+                    <span className="capitalize ">Workers</span>
                   </NavLink>
               </div>}
              {(role === 'ROLE_ADMIN') && <div>
@@ -133,7 +134,7 @@ const Sidebar = () => {
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {<RiContactsLine />}
-                    <span className="capitalize ">{t('Users')}</span>
+                    <span className="capitalize ">Users</span>
                   </NavLink>
               </div>}
           </div>

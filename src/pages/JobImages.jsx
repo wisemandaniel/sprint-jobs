@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { Navbar, Sidebar, ThemeSettings } from '../components';
 import '../App.css';
@@ -9,6 +10,12 @@ import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const JobImages = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -18,6 +25,10 @@ const JobImages = () => {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [showSnack, setShowSnack] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [showSuccessSnack, setShowSuccessSnack] = useState(false)
+  const [message, setMessage] = useState('')
 
   const openLightbox = (index) => {
     setIsOpen(true);
@@ -60,6 +71,29 @@ const JobImages = () => {
       console.log('error: ', error.message);
     }
   }
+
+  const handleDownload = (url, name) => {
+    setLoading(true)
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', name);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setMessage('File downloaded successfully')
+        setShowSuccessSnack(true)
+        setLoading(false)
+      })
+      .catch(error => {
+        setLoading(false)
+        setErrorMessage(`Error downloading file: , ${error}`)
+        setShowSnack(true)
+      });
+  };
   
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
@@ -106,7 +140,7 @@ const JobImages = () => {
             <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 flex flex-col justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
                 {imageUrls.map((imageUrl, index) => (
-                    <div key={index} className="relative group" onClick={() => openLightbox(index)}>
+                    <div key={index} className="relative group" onClick={() => handleDownload(imageUrl.url, imageUrl.name)}>
                     <img
                         src={imageUrl.url}
                         alt={`Image ${index + 1}`}
@@ -114,17 +148,6 @@ const JobImages = () => {
                     />
                     </div>
                 ))}
-
-                {isOpen && (
-                    <Lightbox
-                    mainSrc={imageUrls[photoIndex].url}
-                    nextSrc={imageUrls[(photoIndex + 1) % imageUrls.length]}
-                    prevSrc={imageUrls[(photoIndex + imageUrls.length - 1) % imageUrls.length]}
-                    onCloseRequest={() => setIsOpen(false)}
-                    onMovePrevRequest={() => setPhotoIndex((photoIndex + imageUrls.length - 1) % imageUrls.length)}
-                    onMoveNextRequest={() => setPhotoIndex((photoIndex + 1) % imageUrls.length)}
-                    />
-                )}
             </div>
             <div className=' lg:flex'>
             </div>
@@ -135,6 +158,38 @@ const JobImages = () => {
    {loading && <div>
     <LoadingSpinner />
    </div>}
+   {showSnack && 
+            <Snackbar
+            open={showModal}
+            autoHideDuration={5000}
+            onClose={() => setShowModal(false)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={() => setShowModal(false)}
+              severity="error"
+            >
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+        }
+        {showSuccessSnack && 
+            <div style={{marginTop: '8px'}}>
+              <Snackbar
+                open={showSuccessSnack}
+                autoHideDuration={3000}
+                onClose={() => setShowSuccessSnack(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              >
+                <Alert
+                  onClose={() => setShowSuccessSnack(false)}
+                  severity="success"
+                >
+                  {message}
+                </Alert>
+              </Snackbar>
+            </div>
+        }
     </div>
   );
 };

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { Navbar, Sidebar, ThemeSettings } from '../components';
 import '../App.css';
@@ -57,7 +58,7 @@ const AllJobs = () => {
 
     try {
       setLoading(false)
-      const response = await fetch(`${baseUrl}protected/jobs/created`, {
+      const response = await fetch(`${baseUrl}protected/jobs`, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + user.accessToken,

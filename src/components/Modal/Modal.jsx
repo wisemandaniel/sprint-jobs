@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Button from '../../components/Button/Button';
 
 function Modal({ closeModal, children}) {

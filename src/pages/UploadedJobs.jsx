@@ -79,7 +79,7 @@ const AploadedJobs = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'numberOfPages') {
-      const calculatedPrice = value * 1;
+      const calculatedPrice = value * 150;
       setFormValues((prevFormValues) => ({
         ...prevFormValues,
         [name]: value,

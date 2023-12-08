@@ -151,7 +151,7 @@ const JobDetail = () => {
       "description": formValues.describe
     }
 
-    if (transactions.length === 0 && formValues.amount < job.amount / 2) {
+    if (transactions.length === 0 && formValues.amount < (job.amount / 2)) {
       setErrorMessage(`Amount must be greater than or equal to ${job.amount / 2} FCFA`)
       setLoading(false)
       setShowSnack(true)
@@ -169,7 +169,8 @@ const JobDetail = () => {
         setShowSnack(false);
       }, 3000);
       
-    } else {
+    } 
+    else {
       try {
         const response = await fetch(`${baseUrl}protected/payments?jobId=${jobId}`, {
           method: 'POST',
@@ -187,6 +188,7 @@ const JobDetail = () => {
           setDone(true)
           countdown(60)
         } else {
+          alert(response.status)
           setShowText(false)
           setLoading(false)
         }
@@ -422,13 +424,13 @@ const JobDetail = () => {
        {loading && <LoadingSpinner />}
         {showSnack && 
             <Snackbar
-            open={showModal}
+            open={showSnack}
             autoHideDuration={5000}
-            onClose={() => setShowModal(false)}
+            onClose={() => setShowSnack(false)}
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           >
             <Alert
-              onClose={() => setShowModal(false)}
+              onClose={() => setShowSnack(false)}
               severity="error"
             >
               {errorMessage}

@@ -11,6 +11,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ErrorSnackMessage from '../components/ErrorSnackbar/ErrorSnackbar';
 import SnackMessage from '../components/SnackBar/Snackbar'
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner'
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const AppliedJobDetail = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -374,8 +380,36 @@ const AppliedJobDetail = () => {
       )}
     </div>
   </div>
-        {showSnack && <ErrorSnackMessage message={errorMessage} />}
-        {showSuccessSnack && <SnackMessage message={sucessMessage} />}
+        {showSnack && 
+           <Snackbar
+           open={showSnack}
+           autoHideDuration={2000}
+           onClose={() => setShowSnack(false)}
+           anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+         >
+           <Alert
+             onClose={() => setShowSnack(false)}
+             severity="success"
+           >
+             {errorMessage}
+           </Alert>
+         </Snackbar>
+        }
+        {showSuccessSnack && 
+            <Snackbar
+            open={showSuccessSnack}
+            autoHideDuration={2000}
+            onClose={() => setShowSuccessSnack(false)}
+            anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={() => setShowSuccessSnack(false)}
+              severity="success"
+            >
+              {sucessMessage}
+            </Alert>
+          </Snackbar>
+          }
         {loading && <LoadingSpinner />}
     </div>
   );

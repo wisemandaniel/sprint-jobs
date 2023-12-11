@@ -10,19 +10,13 @@ import { t } from 'i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import SnackMessage from '../components/SnackBar/Snackbar';
 import ErrorSnackMessage from '../components/ErrorSnackbar/ErrorSnackbar';
-// An array of image URLs
-const imageUrls = [
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww',
-  ];
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const AllJobDetail = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -114,16 +108,13 @@ const AllJobDetail = () => {
 
     setLoading(true)
 
-    const data = {
-      "jobId": jobId,
-    }
-
     if (transactions.length === 0) {
-        setIsMakePayment(true)
+      setLoading(false)
+      setErrorMessage('User has not made payment yet. Job cannot be started')
+      setShowErrorSnack(true)
     } 
     else {
         try {
-            setLoading(false)
             const response = await fetch(`${baseUrl}protected/jobs/start?jobId=${jobId}`, {
               method: 'PUT',
               headers: {
@@ -133,13 +124,16 @@ const AllJobDetail = () => {
             });
       
             if (response.ok) {
+              setLoading(false)
               setShowSuccessSnack(true)
-              setMessage('Successfully have confirmed to start this job')
+              setMessage('You have successfully confirmed to start this job')
             } else {
+              setLoading(false)
               setShowErrorSnack(true)
-              setErrorMessage('An error occured')
+              setErrorMessage('An error occured!!! Please try again')
             }
           } catch (error) {
+            setLoading(false)
             setShowErrorSnack(true)
             setErrorMessage(error)
           }
@@ -276,8 +270,37 @@ const AllJobDetail = () => {
             </div>
           </div>
         </div>}
-        {showSuccessSnack && <SnackMessage message={message} />}
-        {showErrorSnack && <ErrorSnackMessage message={errorMessage} />}
+        {showSuccessSnack && 
+            <Snackbar
+            open={showSuccessSnack}
+            autoHideDuration={5000}
+            onClose={() => setShowSuccessSnack(false)}
+            anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={() => setShowSuccessSnack(false)}
+              severity="success"
+            >
+              {message}
+            </Alert>
+          </Snackbar>
+        }
+        {showErrorSnack && 
+           <Snackbar
+           open={showErrorSnack}
+           autoHideDuration={5000}
+           onClose={() => setShowErrorSnack(false)}
+           anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+         >
+           <Alert
+             onClose={() => setShowErrorSnack(false)}
+             severity="error"
+           >
+             {errorMessage}
+           </Alert>
+         </Snackbar>
+         }
+        {loading && <LoadingSpinner />}
     </div>
   );
 };

@@ -79,7 +79,7 @@ const AploadedJobs = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'numberOfPages') {
-      const calculatedPrice = value * 150;
+      const calculatedPrice = value * 1;
       setFormValues((prevFormValues) => ({
         ...prevFormValues,
         [name]: value,
@@ -293,7 +293,7 @@ const AploadedJobs = () => {
                 <input
                   onChange={handleInputChange}
                   name="numberOfPages"
-                  placeholder={t('Enter_total_number_of_estimated_pages')}
+                  placeholder={'Enter Number of pages you estimate'}
                   type="number"
                   min="0"
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -320,7 +320,7 @@ const AploadedJobs = () => {
                       disabled
                       name="estimatedPrice"
                       onChange={handleInputChange}
-                      placeholder={t('Calculated_from_total_number_of_pages')}
+                      placeholder={'Calculated from total number of pages'}
                       type="text"
                       className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
                     />
@@ -338,8 +338,9 @@ const AploadedJobs = () => {
                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="PDF">PDF</option>
-                    <option value="EXCEL">EXCEL</option>
+                    <option value="WORD">WORD</option>
                     <option value="POWERPOINT">POWERPOINT</option>
+                    <option value="EXCEL">EXCEL</option>
                   </select>
                 </div>
               <div className="mb-4">
@@ -370,7 +371,7 @@ const AploadedJobs = () => {
                 />
               </div>
               <div className="mb-4 flex flex-row justify-between w-5/6">
-                <p>WhatsApp Link: </p>
+                <p className='text-xl'>WhatsApp Link </p>
                 <a style={{color: 'blue', textDecoration: 'underline'}} href={'https://wa.link/ay9c70'}>https://wa.link/ay9c70</a>
               </div>
             </form>

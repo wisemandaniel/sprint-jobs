@@ -102,10 +102,11 @@ const JobDetail = () => {
           const totalAmount = sortedTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
           console.log(totalAmount);
           setPaidAmt(totalAmount)
+        } else if (sortedTransactions.length === 0) {
+          setErrorMessage("You haven't paid the first installment for this job yet. So the job cannot be started")
+          setShowSnack(true)
         }
-      } else {
-        
-      }
+      } 
     } catch (error) {
       console.log('error: ', error.message);
     }
@@ -221,6 +222,11 @@ const JobDetail = () => {
         setLoading(false)
         const responseData = await response.json();
         console.log('JOB STATUS: ', responseData);
+
+        if (responseData.jobStatus === 'COMPLETED') {
+          setMessage('This job has been completed. You can now download it')
+          setShowSuccessSnack(true)
+        }
 
         if (responseData.jobStatus === 'STARTED') {
             setProgress('STARTED')
@@ -425,9 +431,9 @@ const JobDetail = () => {
         {showSnack && 
             <Snackbar
             open={showSnack}
-            autoHideDuration={5000}
+            autoHideDuration={7000}
             onClose={() => setShowSnack(false)}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
           >
             <Alert
               onClose={() => setShowSnack(false)}
@@ -441,9 +447,9 @@ const JobDetail = () => {
             <div style={{marginTop: '8px'}}>
               <Snackbar
                 open={showSuccessSnack}
-                autoHideDuration={3000}
+                autoHideDuration={7000}
                 onClose={() => setShowSuccessSnack(false)}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
               >
                 <Alert
                   onClose={() => setShowSuccessSnack(false)}
